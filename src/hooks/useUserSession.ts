@@ -13,6 +13,22 @@ export function useUserSession() {
   const [dbUser, setDbUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [authEmail, setAuthEmail] = useState<string | null>(null)
+
+  // Store the email from authentication
+  const setAuthenticatedEmail = (email: string) => {
+    setAuthEmail(email)
+    // Also store in localStorage for persistence across page reloads
+    localStorage.setItem('cdp_auth_email', email)
+  }
+
+  // Load stored email on mount
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('cdp_auth_email')
+    if (storedEmail && !authEmail) {
+      setAuthEmail(storedEmail)
+    }
+  }, [authEmail])
 
   useEffect(() => {
     if (!isInitialized) return
@@ -20,6 +36,11 @@ export function useUserSession() {
     if (!currentUser || !evmAddress) {
       setDbUser(null)
       setIsLoading(false)
+      // Clear stored email if user is not authenticated
+      if (!currentUser) {
+        setAuthEmail(null)
+        localStorage.removeItem('cdp_auth_email')
+      }
       return
     }
 
@@ -28,8 +49,13 @@ export function useUserSession() {
         setIsLoading(true)
         setError(null)
 
-        // Find or create user via API
-        const userEmail = (currentUser as CDPUser)?.email || 'unknown@email.com'
+        // Use stored email or fallback to CDP user email or a default
+        const userEmail = authEmail || 
+                         (currentUser as CDPUser)?.email || 
+                         'unknown@email.com'
+
+        console.log('Syncing user with email:', userEmail) // Debug log
+
         const response = await fetch('/api/users', {
           method: 'POST',
           headers: {
@@ -58,9 +84,9 @@ export function useUserSession() {
     }
 
     syncUserToDatabase()
-  }, [isInitialized, currentUser, evmAddress])
+  }, [isInitialized, currentUser, evmAddress, authEmail])
 
-  const updateUser = async (updates: { name?: string }) => {
+  const updateUser = async (updates: { name?: string; bio?: string; profileImageUrl?: string }) => {
     if (!dbUser?._id) return null
 
     try {
@@ -88,6 +114,12 @@ export function useUserSession() {
     }
   }
 
+  const refreshUser = () => {
+    if (dbUser?._id) {
+      setDbUser(prev => prev ? { ...prev } : null)
+    }
+  }
+
   return {
     user: dbUser,
     cdpUser: currentUser,
@@ -95,6 +127,10 @@ export function useUserSession() {
     isLoading,
     error,
     isAuthenticated: !!(currentUser && evmAddress && dbUser),
+    needsOnboarding: !!(dbUser && !dbUser.isOnboardingComplete),
     updateUser,
+    refreshUser,
+    setUser: setDbUser,
+    setAuthenticatedEmail, // Expose method to set email from auth flow
   }
 }

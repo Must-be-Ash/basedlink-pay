@@ -105,8 +105,31 @@ export function validateUserAccess(userId: string, requestedUserId?: string): bo
 
 export function sanitizeUserData(user: User) {
   // Remove sensitive fields before sending to client
-  const { _id, email, name, walletAddress, createdAt, updatedAt } = user
-  return { _id, email, name, walletAddress, createdAt, updatedAt }
+  const { 
+    _id, 
+    email, 
+    username,
+    name, 
+    bio,
+    profileImageUrl,
+    walletAddress, 
+    isOnboardingComplete,
+    createdAt, 
+    updatedAt 
+  } = user
+  
+  return { 
+    _id, 
+    email, 
+    username,
+    name, 
+    bio,
+    profileImageUrl,
+    walletAddress, 
+    isOnboardingComplete,
+    createdAt, 
+    updatedAt 
+  }
 }
 
 export function validateApiKey(request: NextRequest): boolean {

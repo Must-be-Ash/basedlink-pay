@@ -2,8 +2,8 @@
 
 import React, { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Badge } from "@/components/ui/badge"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   Loader2, 
   CreditCard, 
@@ -117,31 +117,34 @@ export function PaymentButton({
   // Payment success state
   if (paymentStatus === 'success' && txHash) {
     return (
-      <div className={className}>
-        <Card className="border-green-200 bg-green-50">
-          <CardHeader className="text-center pb-4">
-            <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
-              <CheckCircle2 className="w-6 h-6 text-green-600" />
-            </div>
-            <CardTitle className="text-lg text-green-800">Payment Successful!</CardTitle>
-            <p className="text-sm text-green-700">
-              Your payment of {product.priceUSDC} USDC has been sent.
-            </p>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-xs text-green-600 font-mono mb-3">
-              Transaction: {txHash.slice(0, 10)}...{txHash.slice(-8)}
-            </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={resetPayment}
-              className="text-green-700 hover:text-green-800"
-            >
-              Make Another Payment
-            </Button>
-          </CardContent>
-        </Card>
+      <div className={`space-y-4 ${className}`}>
+        <div className="text-center pb-4">
+          <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#d1fae5' }}>
+            <CheckCircle2 className="w-6 h-6" style={{ color: '#059669' }} />
+          </div>
+          <h3 className="text-lg font-semibold mb-2" style={{ color: '#065f46' }}>Payment Successful!</h3>
+          <p className="text-sm leading-relaxed" style={{ color: '#047857' }}>
+            Your payment of <span className="font-semibold">{product.priceUSDC} USDC</span> has been sent.
+          </p>
+        </div>
+        <div className="p-3 rounded-lg" style={{ backgroundColor: '#f0fdf4' }}>
+          <p className="text-xs font-mono text-center leading-relaxed" style={{ color: '#059669' }}>
+            Transaction: {txHash.slice(0, 10)}...{txHash.slice(-8)}
+          </p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={resetPayment}
+          className="w-full py-2"
+          style={{ 
+            backgroundColor: '#f0fdf4',
+            color: '#059669',
+            border: '1px solid #bbf7d0'
+          }}
+        >
+          Make Another Payment
+        </Button>
       </div>
     )
   }
@@ -149,68 +152,83 @@ export function PaymentButton({
   // Insufficient balance state - show funding options
   if (paymentStatus === 'insufficient_balance') {
     return (
-      <div className={className}>
-        <Card className="border-orange-200 bg-orange-50">
-          <CardHeader className="text-center pb-4">
-            <div className="mx-auto w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
-              <AlertCircle className="w-6 h-6 text-orange-600" />
-            </div>
-            <CardTitle className="text-lg text-orange-800">Insufficient USDC Balance</CardTitle>
-            <p className="text-sm text-orange-700">
-              You need {product.priceUSDC} USDC but only have {formattedBalance} USDC
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-4">
-                Add USDC to your wallet to complete the payment:
-              </p>
-            </div>
+      <div className={`space-y-6 ${className}`}>
+        <div className="text-center pb-4">
+          <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#fef3c7' }}>
+            <AlertCircle className="w-6 h-6" style={{ color: '#d97706' }} />
+          </div>
+          <h3 className="text-lg font-semibold mb-2" style={{ color: '#92400e' }}>Insufficient USDC Balance</h3>
+          <p className="text-sm leading-relaxed" style={{ color: '#b45309' }}>
+            You need <span className="font-semibold">{product.priceUSDC} USDC</span> but only have <span className="font-semibold">{formattedBalance} USDC</span>
+          </p>
+        </div>
 
-            {/* Single funding button - Coinbase handles guest checkout internally */}
-            <Button
-              onClick={handleFundWallet}
-              disabled={isCreatingSession}
-              className="w-full"
-              size="lg"
-            >
-              {isCreatingSession ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Opening Coinbase Pay...
-                </>
-              ) : (
-                <>
-                  <Plus className="w-5 h-5 mr-2" />
-                  Add USDC with Coinbase
-                </>
-              )}
-            </Button>
+        <div className="text-center">
+          <p className="text-sm mb-6 leading-relaxed" style={{ color: '#6b7280' }}>
+            Add USDC to your wallet to complete the payment:
+          </p>
+        </div>
 
-            <div className="flex gap-2 mt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={resetPayment}
-                className="flex-1"
-              >
-                Back to Payment
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={recheckBalance}
-                className="flex-1"
-              >
-                Refresh Balance
-              </Button>
-            </div>
+        {/* Single funding button */}
+        <Button
+          onClick={handleFundWallet}
+          disabled={isCreatingSession}
+          className="w-full py-3 text-base font-medium"
+          size="lg"
+          style={{ 
+            backgroundColor: '#1f2937', 
+            color: '#ffffff',
+            border: 'none'
+          }}
+        >
+          {isCreatingSession ? (
+            <>
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              Opening Coinbase Pay...
+            </>
+          ) : (
+            <>
+              <Plus className="w-5 h-5 mr-2" />
+              Add USDC with Coinbase
+            </>
+          )}
+        </Button>
 
-            <div className="text-xs text-center text-muted-foreground mt-4">
-              <p>💳 Buy with card or bank • 👤 Guest checkout available • 🔒 Secure on Base network</p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Action buttons - Stack vertically to prevent overflow */}
+        <div className="space-y-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={resetPayment}
+            className="w-full py-2"
+            style={{ 
+              backgroundColor: '#f9fafb',
+              color: '#6b7280',
+              border: '1px solid #e5e7eb'
+            }}
+          >
+            Back to Payment
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={recheckBalance}
+            className="w-full py-2"
+            style={{ 
+              backgroundColor: '#f9fafb',
+              color: '#6b7280',
+              border: '1px solid #e5e7eb'
+            }}
+          >
+            Refresh Balance
+          </Button>
+        </div>
+
+        <div className="text-center pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
+          <p className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
+            💳 Buy with card or bank • 👤 Guest checkout available • 🔒 Secure on Base network
+          </p>
+        </div>
       </div>
     )
   }
@@ -218,74 +236,65 @@ export function PaymentButton({
   // Not authenticated state
   if (!isAuthenticated) {
     return (
-      <div className={className}>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <Wallet className="mx-auto h-12 w-12 text-muted-foreground" />
-              <div>
-                <h3 className="font-semibold">Connect Your Wallet</h3>
-                <p className="text-sm text-muted-foreground">
-                  Please connect your wallet to make a payment
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className={`text-center space-y-4 ${className}`}>
+        <Wallet className="mx-auto h-12 w-12" style={{ color: '#9ca3af' }} />
+        <div>
+          <h3 className="font-semibold text-lg mb-2" style={{ color: '#1f2937' }}>Connect Your Wallet</h3>
+          <p className="text-sm leading-relaxed" style={{ color: '#6b7280' }}>
+            Please connect your wallet to make a payment
+          </p>
+        </div>
       </div>
     )
   }
 
   // Default payment state
   return (
-    <div className={className}>
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Payment Details</CardTitle>
-            <Badge variant="secondary">{product.priceUSDC} USDC</Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Amount:</span>
-            <span className="font-medium">{product.priceUSDC} USDC</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Network:</span>
-            <span className="font-medium">Base</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Your balance:</span>
-            <span className="font-medium">
-              {checkingBalance ? (
-                <Loader2 className="w-4 h-4 animate-spin inline" />
-              ) : (
-                `${formattedBalance} USDC`
-              )}
-            </span>
-          </div>
-          
-          <Button
-            onClick={handlePayment}
-            disabled={disabled || isLoading || paymentStatus === 'processing' || checkingBalance}
-            className="w-full"
-            size="lg"
-          >
-            {paymentStatus === 'processing' ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Processing Payment...
-              </>
+    <div className={`space-y-6 ${className}`}>
+      <div className="space-y-4">
+        <div className="flex justify-between text-sm">
+          <span style={{ color: '#6b7280' }}>Amount:</span>
+          <span className="font-medium" style={{ color: '#1f2937' }}>{product.priceUSDC} USDC</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span style={{ color: '#6b7280' }}>Network:</span>
+          <span className="font-medium" style={{ color: '#1f2937' }}>Base</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span style={{ color: '#6b7280' }}>Your balance:</span>
+          <span className="font-medium" style={{ color: '#1f2937' }}>
+            {checkingBalance ? (
+              <Loader2 className="w-4 h-4 animate-spin inline" />
             ) : (
-              <>
-                <CreditCard className="w-4 h-4 mr-2" />
-                Pay {product.priceUSDC} USDC
-              </>
+              `${formattedBalance} USDC`
             )}
-          </Button>
-        </CardContent>
-      </Card>
+          </span>
+        </div>
+      </div>
+      
+      <Button
+        onClick={handlePayment}
+        disabled={disabled || isLoading || paymentStatus === 'processing' || checkingBalance}
+        className="w-full py-3 text-base font-medium"
+        size="lg"
+        style={{ 
+          backgroundColor: '#1f2937', 
+          color: '#ffffff',
+          border: 'none'
+        }}
+      >
+        {paymentStatus === 'processing' ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Processing Payment...
+          </>
+        ) : (
+          <>
+            <CreditCard className="w-4 h-4 mr-2" />
+            Pay {product.priceUSDC} USDC
+          </>
+        )}
+      </Button>
     </div>
   )
 }

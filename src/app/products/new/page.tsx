@@ -16,7 +16,6 @@ interface ProductFormData {
   description?: string
   priceUSD: number
   recipientAddress?: string
-  slug: string
 }
 
 export default function NewProductPage() {
@@ -75,7 +74,7 @@ export default function NewProductPage() {
             <p className="text-muted-foreground mb-6">
               You need to connect your wallet to create products.
             </p>
-            <Link href="/test-wallet">
+            <Link href="/onboarding">
               <Button>Connect Wallet</Button>
             </Link>
           </div>

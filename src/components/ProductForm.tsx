@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+// import React, { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { generateSlug } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import type { Product } from "@/types/product"
@@ -19,7 +18,6 @@ const productSchema = z.object({
   description: z.string().max(500, "Description too long").optional(),
   priceUSD: z.number().min(0.01, "Price must be at least $0.01").max(10000, "Price too high"),
   recipientAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address").optional(),
-  slug: z.string().min(1, "URL slug is required").max(50, "Slug too long"),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
@@ -41,13 +39,10 @@ export function ProductForm({
   className,
   defaultRecipientAddress
 }: ProductFormProps) {
-  const [customSlug, setCustomSlug] = useState(false)
-  
   const {
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors, isValid }
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -56,31 +51,14 @@ export function ProductForm({
       description: product?.description || "",
       priceUSD: product?.priceUSD || 1,
       recipientAddress: product?.recipientAddress || defaultRecipientAddress || "",
-      slug: product?.slug || "",
     },
     mode: "onChange"
   })
 
-  const watchedName = watch("name")
-  const watchedSlug = watch("slug")
   const watchedPrice = watch("priceUSD")
-
-  // Auto-generate slug from name unless user is customizing it
-  useEffect(() => {
-    if (!customSlug && watchedName) {
-      const generatedSlug = generateSlug(watchedName)
-      setValue("slug", generatedSlug, { shouldValidate: true })
-    }
-  }, [watchedName, customSlug, setValue])
 
   // Calculate USDC equivalent (1:1 for now, could add real-time conversion)
   const usdcAmount = watchedPrice || 0
-
-  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomSlug(true)
-    const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')
-    setValue("slug", value, { shouldValidate: true })
-  }
 
   const handleFormSubmit = async (data: ProductFormData) => {
     try {
@@ -112,10 +90,13 @@ export function ProductForm({
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
+            <p className="text-xs text-muted-foreground">
+              Your payment link will be automatically generated from this name
+            </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Description *</Label>
             <Textarea
               id="description"
               {...register("description")}
@@ -160,7 +141,7 @@ export function ProductForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="recipientAddress">Recipient Wallet Address</Label>
+            <Label htmlFor="recipientAddress">Recipient Wallet Address *</Label>
             <Input
               id="recipientAddress"
               {...register("recipientAddress")}
@@ -174,38 +155,6 @@ export function ProductForm({
               Edit this field to send payments to a different wallet address
             </p>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="slug">Payment Link URL *</Label>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">
-                basedlink.xyz/pay/
-              </span>
-              <Input
-                id="slug"
-                value={watchedSlug}
-                onChange={handleSlugChange}
-                placeholder="my-product"
-                disabled={isLoading}
-                className="flex-1"
-              />
-            </div>
-            {errors.slug && (
-              <p className="text-sm text-destructive">{errors.slug.message}</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              This will be your unique payment link
-            </p>
-          </div>
-
-          {watchedSlug && (
-            <div className="p-3 bg-muted rounded-lg">
-              <Label className="text-xs text-muted-foreground">Preview:</Label>
-              <p className="font-mono text-sm">
-                basedlink.xyz/pay/{watchedSlug}
-              </p>
-            </div>
-          )}
 
           <div className="flex justify-end space-x-3 pt-4">
             {onCancel && (

@@ -9,6 +9,7 @@ export class UserModel {
     
     const user: User = {
       ...userData,
+      isOnboardingComplete: false, // New users need to complete onboarding
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -24,11 +25,58 @@ export class UserModel {
     return await collection.findOne({ email })
   }
 
+  static async findByUsername(username: string): Promise<User | null> {
+    const db = await getDatabase()
+    const collection = db.collection<User>(COLLECTIONS.USERS)
+    
+    return await collection.findOne({ username })
+  }
+
   static async findById(id: string): Promise<User | null> {
     const db = await getDatabase()
     const collection = db.collection<User>(COLLECTIONS.USERS)
     
     return await collection.findOne({ _id: new ObjectId(id) })
+  }
+
+  static async isUsernameAvailable(username: string, excludeUserId?: string): Promise<boolean> {
+    const db = await getDatabase()
+    const collection = db.collection<User>(COLLECTIONS.USERS)
+    
+    const query: { username: string; _id?: { $ne: ObjectId } } = { username }
+    if (excludeUserId) {
+      query._id = { $ne: new ObjectId(excludeUserId) }
+    }
+    
+    const existingUser = await collection.findOne(query)
+    return !existingUser
+  }
+
+  static async generateUniqueUsername(baseUsername: string): Promise<string> {
+    let username = baseUsername.toLowerCase().replace(/[^a-zA-Z0-9_-]/g, '')
+    let counter = 1
+    
+    // Ensure minimum length
+    if (username.length < 3) {
+      username = 'user' + username
+    }
+    
+    // Ensure maximum length
+    if (username.length > 30) {
+      username = username.substring(0, 30)
+    }
+    
+    let candidateUsername = username
+    
+    while (!(await this.isUsernameAvailable(candidateUsername))) {
+      const suffix = counter.toString()
+      const maxBaseLength = 30 - suffix.length
+      const base = username.substring(0, maxBaseLength)
+      candidateUsername = base + suffix
+      counter++
+    }
+    
+    return candidateUsername
   }
 
   static async updateById(id: string, updates: UpdateUserRequest): Promise<User | null> {
@@ -71,7 +119,16 @@ export class UserModel {
     let user = await this.findByEmail(email)
     
     if (!user) {
-      user = await this.create({ email, name, walletAddress })
+      // Generate unique username from email
+      const baseUsername = email.split('@')[0]
+      const uniqueUsername = await this.generateUniqueUsername(baseUsername)
+      
+      user = await this.create({ 
+        email, 
+        username: uniqueUsername,
+        name, 
+        walletAddress 
+      })
     } else if (walletAddress && user.walletAddress !== walletAddress) {
       user = await this.updateWalletAddress(email, walletAddress)
     }

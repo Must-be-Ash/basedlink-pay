@@ -124,7 +124,7 @@ export default function DashboardPage() {
             <p className="text-muted-foreground mb-6">
               You need to connect your wallet to access the dashboard.
             </p>
-            <Link href="/test-wallet">
+            <Link href="/onboarding">
               <Button>Connect Wallet</Button>
             </Link>
           </div>

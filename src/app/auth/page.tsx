@@ -16,16 +16,26 @@ import {
   ArrowLeft
 } from "lucide-react"
 import Link from "next/link"
+import type { CDPUser } from "@/types/cdp"
 
 export default function AuthPage() {
   const router = useRouter()
-  const { isAuthenticated } = useUserSession()
+  const { isAuthenticated, needsOnboarding, setAuthenticatedEmail } = useUserSession()
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard')
+      if (needsOnboarding) {
+        router.push('/onboarding')
+      } else {
+        router.push('/dashboard')
+      }
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, needsOnboarding, router])
+
+  const handleAuthSuccess = (user: CDPUser, address: string, email: string) => {
+    console.log('Authentication successful with email:', email) // Debug log
+    setAuthenticatedEmail(email)
+  }
 
   return (
     <CDPProvider>
@@ -56,7 +66,7 @@ export default function AuthPage() {
                   <CardTitle>Sign In with Email</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <WalletAuth />
+                  <WalletAuth onAuthSuccess={handleAuthSuccess} />
                 </CardContent>
               </Card>
 

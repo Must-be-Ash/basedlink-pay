@@ -112,7 +112,7 @@ export default function PaymentsPage() {
             <p className="text-muted-foreground mb-6">
               You need to connect your wallet to view payments.
             </p>
-            <Link href="/test-wallet">
+            <Link href="/onboarding">
               <Button>Connect Wallet</Button>
             </Link>
           </div>

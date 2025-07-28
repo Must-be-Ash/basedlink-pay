@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { Container } from "@/components/Container"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { PaymentButton } from "@/components/PaymentButton"
 import { Loading } from "@/components/Loading"
@@ -11,7 +11,7 @@ import { formatCurrency } from "@/lib/utils"
 import { CDPProvider } from "@/components/CDPProvider"
 import { WalletAuth } from "@/components/WalletAuth"
 import { useUserSession } from "@/hooks/useUserSession"
-import { ShoppingBag, User, CheckCircle, AlertCircle } from "lucide-react"
+import { ShoppingBag, User, CheckCircle, AlertCircle, CreditCard, Wallet } from "lucide-react"
 import Link from "next/link"
 import type { ProductWithSeller } from "@/types/product"
 
@@ -72,17 +72,17 @@ export default function PaymentPage() {
   if (error || !product) {
     return (
       <CDPProvider>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
           <Container className="py-16">
             <div className="max-w-md mx-auto text-center">
-              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertCircle className="w-8 h-8 text-destructive" />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#fee2e2' }}>
+                <AlertCircle className="w-8 h-8" style={{ color: '#dc2626' }} />
               </div>
-              <h1 className="text-2xl font-bold mb-4">Payment Link Not Found</h1>
-              <p className="text-muted-foreground mb-6">
+              <h1 className="text-2xl font-bold mb-4" style={{ color: '#1f2937' }}>Payment Link Not Found</h1>
+              <p className="mb-6" style={{ color: '#6b7280' }}>
                 {error || "This payment link is invalid or has been disabled."}
               </p>
-              <Link href="/" className="text-primary hover:underline">
+              <Link href="/" className="hover:underline" style={{ color: '#3b82f6' }}>
                 Return to Homepage
               </Link>
             </div>
@@ -95,23 +95,23 @@ export default function PaymentPage() {
   if (paymentSuccess) {
     return (
       <CDPProvider>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
           <Container className="py-16">
             <div className="max-w-md mx-auto text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#dcfce7' }}>
+                <CheckCircle className="w-8 h-8" style={{ color: '#16a34a' }} />
               </div>
-              <h1 className="text-2xl font-bold mb-4">Payment Successful!</h1>
-              <p className="text-muted-foreground mb-6">
+              <h1 className="text-2xl font-bold mb-4" style={{ color: '#1f2937' }}>Payment Successful!</h1>
+              <p className="mb-6" style={{ color: '#6b7280' }}>
                 Thank you for your payment. Your transaction has been processed successfully.
               </p>
-              <div className="text-left bg-muted p-4 rounded-lg mb-6">
-                <p className="text-sm text-muted-foreground mb-1">Purchased:</p>
-                <p className="font-medium">{product.name}</p>
-                <p className="text-sm text-muted-foreground mt-2 mb-1">Amount:</p>
-                <p className="font-medium">{formatCurrency(product.priceUSD)}</p>
+              <div className="text-left p-4 rounded-lg mb-6" style={{ backgroundColor: '#f3f4f6' }}>
+                <p className="text-sm mb-1" style={{ color: '#6b7280' }}>Purchased:</p>
+                <p className="font-medium" style={{ color: '#1f2937' }}>{product.name}</p>
+                <p className="text-sm mt-2 mb-1" style={{ color: '#6b7280' }}>Amount:</p>
+                <p className="font-medium" style={{ color: '#1f2937' }}>{formatCurrency(product.priceUSD)}</p>
               </div>
-              <Link href="/" className="text-primary hover:underline">
+              <Link href="/" className="hover:underline" style={{ color: '#3b82f6' }}>
                 Return to Homepage
               </Link>
             </div>
@@ -123,63 +123,77 @@ export default function PaymentPage() {
 
   return (
     <CDPProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
         <Container className="py-8">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-md mx-auto">
             {/* Header */}
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold mb-2">Complete Your Payment</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-3xl font-bold mb-3" style={{ color: '#1f2937' }}>Complete Your Payment</h1>
+              <p style={{ color: '#6b7280', fontSize: '16px' }}>
                 Secure crypto payment powered by Coinbase
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Product Info */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center space-x-2">
-                    <ShoppingBag className="w-5 h-5 text-muted-foreground" />
-                    <CardTitle className="text-lg">Product Details</CardTitle>
+            {/* Combined Product & Payment Section */}
+            <Card className="border" style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
+              <CardContent className="p-8">
+                {/* Product Details */}
+                <div className="mb-8">
+                  <div className="flex items-center space-x-2 mb-6">
+                    <ShoppingBag className="w-5 h-5" style={{ color: '#6b7280' }} />
+                    <h2 className="text-lg font-semibold" style={{ color: '#1f2937' }}>Product Details</h2>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                    {product.description && (
-                      <p className="text-muted-foreground mb-4">{product.description}</p>
-                    )}
-                  </div>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold text-2xl mb-3" style={{ color: '#1f2937' }}>{product.name}</h3>
+                      {product.description && (
+                        <p className="mb-4 leading-relaxed" style={{ color: '#6b7280' }}>{product.description}</p>
+                      )}
+                    </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold">
-                      {formatCurrency(product.priceUSD)}
-                    </span>
-                    <Badge variant="outline">
-                      {product.priceUSDC} USDC
-                    </Badge>
-                  </div>
+                    <div className="flex items-center justify-between py-4 px-4 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
+                      <span className="text-3xl font-bold" style={{ color: '#1f2937' }}>
+                        {formatCurrency(product.priceUSD)}
+                      </span>
+                      <Badge variant="outline" className="px-3 py-1" style={{ 
+                        backgroundColor: '#f3f4f6', 
+                        borderColor: '#d1d5db',
+                        color: '#374151',
+                        fontSize: '14px'
+                      }}>
+                        {product.priceUSDC} USDC
+                      </Badge>
+                    </div>
 
-                  <div className="pt-4 border-t">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-2 text-sm" style={{ color: '#6b7280' }}>
                       <User className="w-4 h-4" />
-                      <span>Sold by {product.seller?.name || 'Seller'}</span>
+                      <span>Sold by {product.seller?.name || product.seller?.username || 'Seller'}</span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Payment Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Payment</CardTitle>
-                </CardHeader>
-                <CardContent>
+                {/* Divider */}
+                <div className="border-t mb-8" style={{ borderColor: '#e5e7eb' }}></div>
+
+                {/* Payment Section */}
+                <div>
+                  <div className="flex items-center space-x-2 mb-6">
+                    <CreditCard className="w-5 h-5" style={{ color: '#6b7280' }} />
+                    <h2 className="text-lg font-semibold" style={{ color: '#1f2937' }}>Payment</h2>
+                  </div>
+
                   {!isAuthenticated ? (
-                    <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Connect your wallet to complete the payment
-                      </p>
+                    <div className="space-y-6">
+                      <div className="text-center space-y-4">
+                        <Wallet className="mx-auto h-12 w-12" style={{ color: '#9ca3af' }} />
+                        <div>
+                          <h3 className="font-semibold text-lg mb-2" style={{ color: '#1f2937' }}>Connect Your Wallet</h3>
+                          <p className="text-sm leading-relaxed" style={{ color: '#6b7280' }}>
+                            Please connect your wallet to make a payment
+                          </p>
+                        </div>
+                      </div>
                       <WalletAuth />
                     </div>
                   ) : (
@@ -189,13 +203,13 @@ export default function PaymentPage() {
                       onPaymentError={handlePaymentError}
                     />
                   )}
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Security Notice */}
             <div className="mt-8 text-center">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm leading-relaxed" style={{ color: '#9ca3af' }}>
                 🔒 Payments are processed securely on the Base network. 
                 Your transaction will be confirmed within seconds.
               </p>

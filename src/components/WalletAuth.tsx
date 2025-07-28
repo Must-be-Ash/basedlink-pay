@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
 import type { CDPUser } from "@/types/cdp"
 
 interface WalletAuthProps {
-  onAuthSuccess?: (user: CDPUser, address: string) => void
+  onAuthSuccess?: (user: CDPUser, address: string, email: string) => void
   className?: string
 }
 
@@ -45,9 +45,9 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
   // Trigger success callback when user is authenticated
   useEffect(() => {
     if (currentUser && evmAddress && onAuthSuccess) {
-      onAuthSuccess(currentUser, evmAddress)
+      onAuthSuccess(currentUser, evmAddress, email)
     }
-  }, [currentUser, evmAddress, onAuthSuccess])
+  }, [currentUser, evmAddress, onAuthSuccess, email])
 
   // Wait for client-side mounting and SDK initialization
   if (!isMounted || !isInitialized) {
@@ -85,12 +85,20 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
     setAuthError(null)
 
     try {
+      console.log('Verifying OTP for email:', email) // Debug log
       await verifyEmailOTP({ flowId, otp })
       // Reset form state
       setFlowId(null)
       setOtp("")
+      const verifiedEmail = email // Store email before clearing
       setEmail("")
       toast.success("Wallet connected successfully!")
+      
+      // Trigger auth success callback with the verified email
+      if (currentUser && evmAddress && onAuthSuccess) {
+        console.log('Calling onAuthSuccess with email:', verifiedEmail) // Debug log
+        onAuthSuccess(currentUser, evmAddress, verifiedEmail)
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Verification failed"
       setAuthError(errorMessage)

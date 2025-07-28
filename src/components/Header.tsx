@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useUserSession } from "@/hooks/useUserSession"
 import { formatAddress } from "@/lib/utils"
-import { Wallet, User, Menu, Copy, CheckCircle2, LogOut, LayoutDashboard, ChevronDown } from "lucide-react"
+import { Wallet, User, Menu, Copy, CheckCircle2, LogOut, LayoutDashboard } from "lucide-react"
 import { useSignOut } from "@coinbase/cdp-hooks"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -113,11 +113,10 @@ export function Header({ className }: HeaderProps) {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="flex items-center space-x-1 w-8 h-8 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors group"
+                    className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors"
                     title="User menu"
                   >
-                    <User className="w-4 h-4 text-primary mx-auto" />
-                    <ChevronDown className="w-3 h-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <User className="w-4 h-4 text-primary" />
                   </button>
 
                   {showDropdown && (

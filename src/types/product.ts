@@ -37,10 +37,11 @@ export interface UpdateProductRequest {
 export interface ProductWithSeller extends Product {
   seller: {
     _id: ObjectId
+    username: string
     name: string
     email: string
     walletAddress?: string
   }
 }
 
-export type ProductUpdate = Partial<Pick<Product, 'name' | 'description' | 'priceUSD' | 'priceUSDC' | 'imageUrl' | 'isActive' | 'recipientAddress' | 'updatedAt'>>
+export type ProductUpdate = Partial<Pick<Product, 'name' | 'description' | 'priceUSD' | 'priceUSDC' | 'imageUrl' | 'isActive' | 'recipientAddress' | 'slug' | 'paymentLink' | 'updatedAt'>>

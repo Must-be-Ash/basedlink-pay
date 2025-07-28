@@ -82,6 +82,26 @@ export class ProductModel {
       updateData.recipientAddress = updates.recipientAddress
     }
     
+    // Regenerate unique slug if name is being updated
+    if (updates.name !== undefined) {
+      const baseSlug = generateSlug(updates.name)
+      let paymentLink = baseSlug
+      let counter = 1
+      
+      // Ensure unique payment link (excluding current product)
+      while (true) {
+        const existingProduct = await this.findByPaymentLink(paymentLink)
+        if (!existingProduct || existingProduct._id?.toString() === id) {
+          break
+        }
+        paymentLink = `${baseSlug}-${counter}`
+        counter++
+      }
+      
+      updateData.slug = paymentLink
+      updateData.paymentLink = paymentLink
+    }
+    
     const result = await collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: updateData },
@@ -134,6 +154,7 @@ export class ProductModel {
           createdAt: 1,
           updatedAt: 1,
           'seller._id': 1,
+          'seller.username': 1,
           'seller.name': 1,
           'seller.email': 1,
           'seller.walletAddress': 1

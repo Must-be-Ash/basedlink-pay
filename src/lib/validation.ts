@@ -3,13 +3,50 @@ import { z } from 'zod'
 // User validation schemas
 export const createUserSchema = z.object({
   email: z.string().email('Invalid email address'),
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be less than 30 characters')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens, and underscores'),
+  name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
+  bio: z.string().max(500, 'Bio too long').optional(),
+  profileImageUrl: z.string().url('Invalid URL').optional(),
+  walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address').optional(),
+})
+
+// Schema for initial user sync (auto-generates username)
+export const syncUserSchema = z.object({
+  email: z.string().email('Invalid email address'),
   name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
   walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address').optional(),
 })
 
 export const updateUserSchema = z.object({
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be less than 30 characters')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens, and underscores')
+    .optional(),
   name: z.string().min(1, 'Name is required').max(100, 'Name too long').optional(),
+  bio: z.string().max(500, 'Bio too long').optional(),
+  profileImageUrl: z.string().url('Invalid URL').optional(),
   walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address').optional(),
+  isOnboardingComplete: z.boolean().optional(),
+})
+
+export const onboardingSchema = z.object({
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be less than 30 characters')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens, and underscores'),
+  name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
+  bio: z.string().max(500, 'Bio too long').optional(),
+})
+
+export const usernameCheckSchema = z.object({
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be less than 30 characters')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens, and underscores'),
 })
 
 // Product validation schemas

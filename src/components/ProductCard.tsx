@@ -44,7 +44,7 @@ export function ProductCard({
             {/* Clickable Product Name */}
             {showOwnerActions && product._id ? (
               <Link 
-                href={`/products/${product._id}/edit`}
+                href={`/products/${product._id}`}
                 className="block group"
               >
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer truncate">
