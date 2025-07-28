@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useUserSession } from "@/hooks/useUserSession"
 import { formatAddress } from "@/lib/utils"
-import { Wallet, User, Menu, Copy, CheckCircle2, LogOut, LayoutDashboard } from "lucide-react"
+import { Wallet, User, Menu, Copy, CheckCircle2, LogOut, LayoutDashboard, Settings } from "lucide-react"
+import Image from "next/image"
 import { useSignOut } from "@coinbase/cdp-hooks"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -16,7 +17,7 @@ interface HeaderProps {
 }
 
 export function Header({ className }: HeaderProps) {
-  const { isAuthenticated, walletAddress } = useUserSession()
+  const { isAuthenticated, walletAddress, user } = useUserSession()
   const signOut = useSignOut()
   const router = useRouter()
   const [addressCopied, setAddressCopied] = useState(false)
@@ -62,6 +63,11 @@ export function Header({ className }: HeaderProps) {
     router.push('/dashboard')
   }
 
+  const handleSettings = () => {
+    setShowDropdown(false)
+    router.push('/settings')
+  }
+
   return (
     <header className={`border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${className}`}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -94,49 +100,106 @@ export function Header({ className }: HeaderProps) {
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
               <div className="hidden sm:flex items-center space-x-2">
-                <div className="text-right">
-                  <button
-                    onClick={handleCopyAddress}
-                    className="flex items-center space-x-1 text-sm font-mono hover:text-primary transition-colors group"
-                    title="Click to copy full address"
-                  >
-                    <span>{walletAddress ? formatAddress(walletAddress) : ''}</span>
-                    {addressCopied ? (
-                      <CheckCircle2 className="w-3 h-3 text-green-600" />
-                    ) : (
-                      <Copy className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    )}
-                  </button>
-                </div>
-                
                 {/* Avatar Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors"
+                    className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors overflow-hidden"
                     title="User menu"
                   >
-                    <User className="w-4 h-4 text-primary" />
+                    {user?.profileImageUrl ? (
+                      <Image
+                        src={user.profileImageUrl}
+                        alt={user.name || 'User'}
+                        width={32}
+                        height={32}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <User className="w-4 h-4 text-primary" />
+                    )}
                   </button>
 
                   {showDropdown && (
-                    <div className="absolute right-0 mt-2 w-48 bg-background border rounded-lg shadow-lg z-50">
+                    <div className="absolute right-0 mt-2 w-64 bg-background border rounded-lg shadow-lg z-50">
                       <div className="py-1">
-                        <button
-                          onClick={handleDashboard}
-                          className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
-                        >
-                          <LayoutDashboard className="w-4 h-4 mr-3" />
-                          Dashboard
-                        </button>
-                        <hr className="my-1 border-border" />
-                        <button
-                          onClick={handleSignOut}
-                          className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
-                        >
-                          <LogOut className="w-4 h-4 mr-3" />
-                          Sign Out
-                        </button>
+                        {/* User Info Header */}
+                        <div className="px-4 py-3 border-b border-border">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                              {user?.profileImageUrl ? (
+                                <Image
+                                  src={user.profileImageUrl}
+                                  alt={user.name || 'User'}
+                                  width={32}
+                                  height={32}
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <User className="w-4 h-4 text-primary" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-foreground truncate">
+                                {user?.name || 'User'}
+                              </div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                @{user?.username || 'username'}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Wallet Address */}
+                          {walletAddress && (
+                            <div className="mt-3 pt-3 border-t border-border">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-xs text-muted-foreground mb-1">Wallet Address</div>
+                                  <div className="text-xs font-mono text-foreground truncate">
+                                    {formatAddress(walletAddress)}
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={handleCopyAddress}
+                                  className="ml-2 p-1 hover:bg-muted rounded transition-colors flex-shrink-0"
+                                  title="Copy wallet address"
+                                >
+                                  {addressCopied ? (
+                                    <CheckCircle2 className="w-3 h-3 text-green-600" />
+                                  ) : (
+                                    <Copy className="w-3 h-3 text-muted-foreground" />
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Menu Items */}
+                        <div className="py-1">
+                          <button
+                            onClick={handleDashboard}
+                            className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4 mr-3" />
+                            Dashboard
+                          </button>
+                          <button
+                            onClick={handleSettings}
+                            className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                          >
+                            <Settings className="w-4 h-4 mr-3" />
+                            Settings
+                          </button>
+                          <hr className="my-1 border-border" />
+                          <button
+                            onClick={handleSignOut}
+                            className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                          >
+                            <LogOut className="w-4 h-4 mr-3" />
+                            Sign Out
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}

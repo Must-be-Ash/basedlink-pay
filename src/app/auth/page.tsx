@@ -2,12 +2,15 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { Container } from "@/components/Container"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CDPProvider } from "@/components/CDPProvider"
 import { WalletAuth } from "@/components/WalletAuth"
 import { useUserSession } from "@/hooks/useUserSession"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { 
   Shield, 
   Zap, 
@@ -20,21 +23,44 @@ import type { CDPUser } from "@/types/cdp"
 
 export default function AuthPage() {
   const router = useRouter()
-  const { isAuthenticated, needsOnboarding, setAuthenticatedEmail } = useUserSession()
+  const { isAuthenticated, needsOnboarding, user, isLoading, needsEmailInput, setAuthenticatedEmail } = useUserSession()
+  const [emailInput, setEmailInput] = useState("")
+  const [emailSubmitting, setEmailSubmitting] = useState(false)
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isLoading) {
+      // Wait for user data to be available before checking onboarding status
+      if (!user) {
+        console.log('Waiting for user data to load before redirecting...')
+        return
+      }
+      
       if (needsOnboarding) {
         router.push('/onboarding')
       } else {
         router.push('/dashboard')
       }
     }
-  }, [isAuthenticated, needsOnboarding, router])
+  }, [isAuthenticated, needsOnboarding, user, isLoading, router])
 
-  const handleAuthSuccess = (user: CDPUser, address: string, email: string) => {
+  const handleAuthSuccess = (_user: CDPUser, _address: string, email: string) => {
     console.log('Authentication successful with email:', email) // Debug log
     setAuthenticatedEmail(email)
+  }
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!emailInput.trim()) return
+    
+    setEmailSubmitting(true)
+    try {
+      console.log('Setting email for pre-authenticated user:', emailInput)
+      setAuthenticatedEmail(emailInput)
+    } catch (error) {
+      console.error('Failed to set email:', error)
+    } finally {
+      setEmailSubmitting(false)
+    }
   }
 
   return (
@@ -63,10 +89,41 @@ export default function AuthPage() {
               {/* Authentication Form */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Sign In with Email</CardTitle>
+                  <CardTitle>
+                    {needsEmailInput ? "Complete Your Profile" : "Sign In with Email"}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <WalletAuth onAuthSuccess={handleAuthSuccess} />
+                  {needsEmailInput ? (
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground mb-4">
+                        Your wallet is connected! Please provide your email address to complete setup.
+                      </p>
+                      <form onSubmit={handleEmailSubmit} className="space-y-4">
+                        <div>
+                          <Label htmlFor="email">Email Address</Label>
+                          <Input 
+                            id="email"
+                            type="email"
+                            value={emailInput}
+                            onChange={(e) => setEmailInput(e.target.value)}
+                            placeholder="your@email.com"
+                            required
+                            disabled={emailSubmitting}
+                          />
+                        </div>
+                        <Button 
+                          type="submit" 
+                          className="w-full"
+                          disabled={emailSubmitting || !emailInput.trim()}
+                        >
+                          {emailSubmitting ? "Setting up..." : "Continue"}
+                        </Button>
+                      </form>
+                    </div>
+                  ) : (
+                    <WalletAuth onAuthSuccess={handleAuthSuccess} />
+                  )}
                 </CardContent>
               </Card>
 

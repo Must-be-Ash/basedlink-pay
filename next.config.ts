@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['mongodb'],
   images: {
     domains: ['localhost', 'basedlink.xyz'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.vercel-storage.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   env: {
     MONGODB_URI: process.env.MONGODB_URI,

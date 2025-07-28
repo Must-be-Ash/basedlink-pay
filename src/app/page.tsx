@@ -1,13 +1,29 @@
-import Link from "next/link"
+"use client"
+
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Container } from "@/components/Container"
+import { CDPProvider } from "@/components/CDPProvider"
+import { useUserSession } from "@/hooks/useUserSession"
 import { ArrowRight, Zap, Globe, Shield, DollarSign } from "lucide-react"
 
 export default function HomePage() {
+  const router = useRouter()
+  const { isAuthenticated } = useUserSession()
+
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+    } else {
+      router.push('/auth')
+    }
+  }
+  
   return (
-    <div className="min-h-screen">
+    <CDPProvider>
+      <div className="min-h-screen">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-primary/5 to-background">
         <Container>
@@ -24,12 +40,10 @@ export default function HomePage() {
               No wallet downloads or complex setup required for your customers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard">
-                <Button size="lg" className="min-w-[200px]">
-                  Get Started Free
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
+              <Button onClick={handleGetStarted} size="lg" className="min-w-[200px]">
+                Get Started Free
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
               <Button variant="outline" size="lg" className="min-w-[200px]">
                 View Demo
               </Button>
@@ -152,15 +166,14 @@ export default function HomePage() {
             <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
               Join thousands of creators and businesses accepting crypto payments with ease.
             </p>
-            <Link href="/dashboard">
-              <Button size="lg">
-                Create Your First Product
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
+            <Button onClick={handleGetStarted} size="lg">
+              Create Your First Product
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+        </div>
         </Container>
       </section>
-    </div>
+      </div>
+    </CDPProvider>
   )
 }

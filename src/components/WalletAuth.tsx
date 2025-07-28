@@ -37,17 +37,24 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
   const [authError, setAuthError] = useState<string | null>(null)
   const [authLoading, setAuthLoading] = useState(false)
   const [addressCopied, setAddressCopied] = useState(false)
+  
+  // Track verified email for callback
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null)
+  const [otpVerified, setOtpVerified] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
-  // Trigger success callback when user is authenticated
+  // Handle auth success callback when user and address are available after OTP verification
   useEffect(() => {
-    if (currentUser && evmAddress && onAuthSuccess) {
-      onAuthSuccess(currentUser, evmAddress, email)
+    if (otpVerified && currentUser && evmAddress && verifiedEmail && onAuthSuccess) {
+      console.log('Calling onAuthSuccess with email:', verifiedEmail) // Debug log
+      onAuthSuccess(currentUser, evmAddress, verifiedEmail)
+      setOtpVerified(false) // Reset the flag
+      setVerifiedEmail(null) // Clear the stored email
     }
-  }, [currentUser, evmAddress, onAuthSuccess, email])
+  }, [otpVerified, currentUser, evmAddress, verifiedEmail, onAuthSuccess])
 
   // Wait for client-side mounting and SDK initialization
   if (!isMounted || !isInitialized) {
@@ -87,18 +94,17 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
     try {
       console.log('Verifying OTP for email:', email) // Debug log
       await verifyEmailOTP({ flowId, otp })
+      
+      // Store email and set verification flag
+      setVerifiedEmail(email)
+      setOtpVerified(true)
+      
       // Reset form state
       setFlowId(null)
       setOtp("")
-      const verifiedEmail = email // Store email before clearing
       setEmail("")
       toast.success("Wallet connected successfully!")
       
-      // Trigger auth success callback with the verified email
-      if (currentUser && evmAddress && onAuthSuccess) {
-        console.log('Calling onAuthSuccess with email:', verifiedEmail) // Debug log
-        onAuthSuccess(currentUser, evmAddress, verifiedEmail)
-      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Verification failed"
       setAuthError(errorMessage)
@@ -115,6 +121,8 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
       setOtp("")
       setFlowId(null)
       setAuthError(null)
+      setVerifiedEmail(null)
+      setOtpVerified(false)
       toast.success("Signed out successfully")
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Sign out failed"

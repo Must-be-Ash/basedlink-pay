@@ -22,6 +22,12 @@ export default function OnboardingPage() {
         return
       }
       
+      // Wait for user data to be loaded before checking onboarding status
+      if (!user) {
+        console.log('Waiting for user data to load...')
+        return
+      }
+      
       if (!needsOnboarding) {
         // Already completed onboarding, redirect to dashboard
         console.log('User onboarding complete, redirecting to dashboard')
@@ -29,7 +35,7 @@ export default function OnboardingPage() {
         return
       }
     }
-  }, [isLoading, isAuthenticated, needsOnboarding, router])
+  }, [isLoading, isAuthenticated, needsOnboarding, user, router])
 
   const handleOnboardingComplete = (updatedUser: User) => {
     console.log('Onboarding completed for user:', updatedUser.email)

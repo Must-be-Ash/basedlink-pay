@@ -20,6 +20,7 @@ import {
   ExternalLink
 } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import type { Product } from "@/types/product"
 
 interface Analytics {
@@ -32,7 +33,8 @@ interface Analytics {
 }
 
 export default function DashboardPage() {
-  const { isAuthenticated, user, isLoading: userLoading } = useUserSession()
+  const router = useRouter()
+  const { isAuthenticated, user, isLoading: userLoading, needsOnboarding } = useUserSession()
   const [products, setProducts] = useState<Product[]>([])
   const [analytics, setAnalytics] = useState<Analytics | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -97,11 +99,19 @@ export default function DashboardPage() {
     }
   }
 
+  // Redirect to onboarding if needed
   useEffect(() => {
-    if (isAuthenticated && user?._id) {
+    if (!userLoading && isAuthenticated && needsOnboarding) {
+      router.push('/onboarding')
+      return
+    }
+  }, [userLoading, isAuthenticated, needsOnboarding, router])
+
+  useEffect(() => {
+    if (isAuthenticated && user?._id && !needsOnboarding) {
       fetchData()
     }
-  }, [isAuthenticated, user, fetchData])
+  }, [isAuthenticated, user, fetchData, needsOnboarding])
 
   if (userLoading) {
     return (
@@ -131,6 +141,10 @@ export default function DashboardPage() {
         </Container>
       </div>
     )
+  }
+
+  if (needsOnboarding) {
+    return null // Will redirect via useEffect
   }
 
   return (

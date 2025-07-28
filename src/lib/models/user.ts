@@ -39,6 +39,13 @@ export class UserModel {
     return await collection.findOne({ _id: new ObjectId(id) })
   }
 
+  static async findByWalletAddress(walletAddress: string): Promise<User | null> {
+    const db = await getDatabase()
+    const collection = db.collection<User>(COLLECTIONS.USERS)
+    
+    return await collection.findOne({ walletAddress })
+  }
+
   static async isUsernameAvailable(username: string, excludeUserId?: string): Promise<boolean> {
     const db = await getDatabase()
     const collection = db.collection<User>(COLLECTIONS.USERS)
