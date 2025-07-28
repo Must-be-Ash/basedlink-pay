@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { generateJwt } from '@coinbase/cdp-sdk/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,18 +14,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Environment variables for CDP API
-    const CDP_PROJECT_ID = process.env.NEXT_PUBLIC_CDP_PROJECT_ID
+    const CDP_API_KEY_NAME = process.env.CDP_API_KEY_NAME
+    const CDP_PRIVATE_KEY = process.env.CDP_PRIVATE_KEY
 
-    if (!CDP_PROJECT_ID) {
+    if (!CDP_API_KEY_NAME || !CDP_PRIVATE_KEY) {
       return NextResponse.json(
-        { error: 'CDP Project ID not configured' },
+        { error: 'CDP API credentials not configured' },
         { status: 500 }
       )
     }
 
-    // For now, create a session token directly using the CDP Project ID
-    // This is a temporary solution until we can properly implement CDP SDK JWT
-    const sessionTokenRequest = guestCheckout 
+    // Generate JWT using CDP SDK (handles Ed25519 signing properly)
+    const jwt = await generateJwt({
+      apiKeyId: CDP_API_KEY_NAME,
+      apiKeySecret: CDP_PRIVATE_KEY,
+      requestMethod: 'POST',
+      requestHost: 'api.developer.coinbase.com',
+      requestPath: '/onramp/v1/token',
+      expiresIn: 120 // 2 minutes
+    })
+
+    // Call CDP Session Token API with proper authentication
+    const requestBody = guestCheckout 
       ? {
           // Guest checkout doesn't require specific addresses
           addresses: [],
@@ -40,41 +51,21 @@ export async function POST(request: NextRequest) {
           assets: ['ETH', 'USDC']
         }
 
-    // Try using CDP Project ID as authorization (temporary approach)
     const response = await fetch('https://api.developer.coinbase.com/onramp/v1/token', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${jwt}`,
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${CDP_PROJECT_ID}`,
       },
-      body: JSON.stringify(sessionTokenRequest)
+      body: JSON.stringify(requestBody)
     })
 
     if (!response.ok) {
-      // If CDP API fails, create a mock session token for development
+      // Log error details only in development
       if (process.env.NODE_ENV === 'development') {
-        console.warn('CDP API failed, using mock session token for development')
-        
-        // Create a mock session token for development
-        const mockToken = Buffer.from(JSON.stringify({
-          userAddress: guestCheckout ? null : userAddress,
-          timestamp: Date.now(),
-          expiresAt: Date.now() + (5 * 60 * 1000),
-          guestCheckout: !!guestCheckout
-        })).toString('base64')
-
-        return NextResponse.json({
-          success: true,
-          data: {
-            token: mockToken,
-            channelId: `mock_${Date.now()}`,
-            expiresAt: Date.now() + (5 * 60 * 1000)
-          }
-        })
+        const errorText = await response.text()
+        console.error('CDP API error:', response.status, errorText)
       }
-
-      const errorText = await response.text()
-      console.error('CDP API error:', response.status, errorText)
       throw new Error(`CDP API error: ${response.status} ${response.statusText}`)
     }
 
