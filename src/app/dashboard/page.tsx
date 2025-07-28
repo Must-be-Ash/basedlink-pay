@@ -65,6 +65,38 @@ export default function DashboardPage() {
     }
   }, [user])
 
+  const handleToggleStatus = async (productId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/products/${productId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !currentStatus })
+      })
+
+      if (response.ok) {
+        // Update the local state immediately for better UX
+        setProducts(prevProducts => 
+          prevProducts.map(product => 
+            product._id?.toString() === productId 
+              ? { ...product, isActive: !currentStatus }
+              : product
+          )
+        )
+        
+        // Also refresh analytics to get updated counts
+        if (user?._id) {
+          const analyticsRes = await fetch(`/api/analytics/seller/${user._id}`)
+          if (analyticsRes.ok) {
+            const { data: analyticsData } = await analyticsRes.json()
+            setAnalytics(analyticsData)
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to toggle product status:', error)
+    }
+  }
+
   useEffect(() => {
     if (isAuthenticated && user?._id) {
       fetchData()
@@ -208,18 +240,23 @@ export default function DashboardPage() {
                 />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.slice(0, 6).map((product) => (
-                    <ProductCard
-                      key={product._id?.toString()}
-                      product={product}
-                      showOwnerActions={true}
-                      onEdit={() => window.location.href = `/products/${product._id}/edit`}
-                      onToggleStatus={() => {
-                        // TODO: Implement toggle status
-                        console.log('Toggle status for:', product._id)
-                      }}
-                    />
-                  ))}
+                  {products.slice(0, 6).map((product) => {
+                    const productId = product._id?.toString()
+                    if (!productId) return null
+                    
+                    return (
+                      <ProductCard
+                        key={productId}
+                        product={product}
+                        showOwnerActions={true}
+                        onEdit={() => window.location.href = `/products/${productId}/edit`}
+                        onToggleStatus={() => handleToggleStatus(
+                          productId, 
+                          product.isActive !== undefined ? product.isActive : product.status === 'active'
+                        )}
+                      />
+                    )
+                  })}
                 </div>
               )}
             </div>
