@@ -1,6 +1,5 @@
 import type { EvmAddress } from "@coinbase/cdp-core"
 
-const ONRAMP_API_BASE = "https://api.developer.coinbase.com/onramp/v1"
 const BASE_RPC_URL = "https://mainnet.base.org"
 const USDC_CONTRACT_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
 

@@ -5,7 +5,6 @@ import { useEvmAddress } from "@coinbase/cdp-hooks"
 import { 
   checkWalletBalance, 
   generateOneClickBuyURL,
-  GUEST_CHECKOUT_LIMITS,
   type BalanceInfo 
 } from "@/lib/onramp"
 

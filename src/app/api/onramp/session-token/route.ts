@@ -14,8 +14,6 @@ export async function POST(request: NextRequest) {
 
     // Environment variables for CDP API
     const CDP_PROJECT_ID = process.env.NEXT_PUBLIC_CDP_PROJECT_ID
-    const CDP_API_KEY_NAME = process.env.CDP_API_KEY_NAME
-    const CDP_PRIVATE_KEY = process.env.CDP_PRIVATE_KEY
 
     if (!CDP_PROJECT_ID) {
       return NextResponse.json(
