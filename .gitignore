@@ -53,6 +53,9 @@ REMAINING_SECURITY_TASKS.md
 SECURITY_AUDIT_REPORT.md
 SECURITY.md
 
+# Onramp API documentation (keep out of repo)
+onramp-api/
+
 # IDE and editor files
 .vscode/
 .idea/
