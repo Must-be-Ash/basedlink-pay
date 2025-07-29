@@ -21,19 +21,19 @@ export async function requireAuth(request: NextRequest): Promise<User | null> {
     // Find user by email in the database
     const user = await UserModel.findByEmail(userEmail)
     if (!user) {
-      console.log('Auth failed: User not found for email:', userEmail)
+      console.log('Auth failed: User not found')
       return null
     }
 
     // Verify that the wallet address matches the user's stored wallet address
     if (user.walletAddress !== walletAddress) {
-      console.log('Auth failed: Wallet address mismatch for user:', userEmail)
+      console.log('Auth failed: Wallet address mismatch')
       return null
     }
 
     // Ensure user has completed onboarding
     if (!user.isOnboardingComplete) {
-      console.log('Auth failed: User has not completed onboarding:', userEmail)
+      console.log('Auth failed: User has not completed onboarding')
       return null
     }
 

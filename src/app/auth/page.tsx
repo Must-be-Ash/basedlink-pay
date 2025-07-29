@@ -36,7 +36,7 @@ export default function AuthPage() {
   }, [isAuthenticated, needsOnboarding, user, isLoading, router])
 
   const handleAuthSuccess = (_user: CDPUser, _address: string, email: string) => {
-    console.log('Authentication successful with email:', email) // Debug log
+    console.log('Authentication successful') // Debug log
     setAuthenticatedEmail(email)
   }
 
@@ -46,7 +46,7 @@ export default function AuthPage() {
     
     setEmailSubmitting(true)
     try {
-      console.log('Setting email for pre-authenticated user:', emailInput)
+      console.log('Setting email for pre-authenticated user')
       setAuthenticatedEmail(emailInput)
     } catch (error) {
       console.error('Failed to set email:', error)

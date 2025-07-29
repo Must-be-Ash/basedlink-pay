@@ -11,7 +11,6 @@ import {
   CheckCircle2, 
   LogOut, 
   Settings, 
-  Zap,
   ShoppingBag,
   DollarSign,
   Home

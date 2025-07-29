@@ -49,7 +49,7 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
   // Handle auth success callback when user and address are available after OTP verification
   useEffect(() => {
     if (otpVerified && currentUser && evmAddress && verifiedEmail && onAuthSuccess) {
-      console.log('Calling onAuthSuccess with email:', verifiedEmail) // Debug log
+      console.log('Calling onAuthSuccess callback') // Debug log
       onAuthSuccess(currentUser, evmAddress, verifiedEmail)
       setOtpVerified(false) // Reset the flag
       setVerifiedEmail(null) // Clear the stored email
@@ -92,7 +92,7 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
     setAuthError(null)
 
     try {
-      console.log('Verifying OTP for email:', email) // Debug log
+      console.log('Verifying OTP') // Debug log
       await verifyEmailOTP({ flowId, otp })
       
       // Store email and set verification flag

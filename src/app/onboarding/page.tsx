@@ -38,7 +38,7 @@ export default function OnboardingPage() {
   }, [isLoading, isAuthenticated, needsOnboarding, user, router])
 
   const handleOnboardingComplete = (updatedUser: User) => {
-    console.log('Onboarding completed for user:', updatedUser.email)
+    console.log('Onboarding completed successfully')
     setUser(updatedUser)
     router.push('/dashboard')
   }
