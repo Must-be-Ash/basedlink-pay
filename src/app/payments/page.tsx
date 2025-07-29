@@ -90,7 +90,7 @@ export default function PaymentsPage() {
 
   const totalEarnings = payments
     .filter(p => p.status === 'completed')
-    .reduce((sum, p) => sum + p.amountUSD, 0)
+    .reduce((sum, p) => sum + p.amountUSDC, 0)
 
   const completedPayments = payments.filter(p => p.status === 'completed').length
   const pendingPayments = payments.filter(p => p.status === 'pending').length
