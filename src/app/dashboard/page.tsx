@@ -394,12 +394,15 @@ export default function DashboardPage() {
                     const productId = product._id?.toString()
                     if (!productId) return null
                     
+                    // Ensure full authentication state is ready before allowing navigation
+                    const isFullyReady = isAuthenticated && user?._id && !isLoading && !userLoading
+                    
                     return (
                       <ProductCard
                         key={productId}
                         product={product}
                         showOwnerActions={true}
-                        onEdit={() => router.push(`/products/${productId}/edit`)}
+                        onEdit={isFullyReady ? (() => router.push(`/products/${productId}/edit`)) : undefined}
                         onToggleStatus={() => handleToggleStatus(
                           productId, 
                           product.isActive !== undefined ? product.isActive : product.status === 'active'

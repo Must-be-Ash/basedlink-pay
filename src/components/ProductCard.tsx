@@ -195,12 +195,13 @@ export function ProductCard({
           {/* Owner Actions Row */}
           {showOwnerActions && (
             <div className="flex gap-3">
-              {onEdit && (
+              {onEdit !== undefined && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onEdit}
-                  className="flex-1 h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  disabled={!onEdit}
+                  className="flex-1 h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   style={{ 
                     backgroundColor: '#f8f9fa',
                     borderColor: '#e5e7eb',
