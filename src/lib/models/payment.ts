@@ -47,6 +47,14 @@ export class PaymentModel {
     return await collection.findOne({ transactionHash })
   }
 
+  static async isTransactionHashUsed(transactionHash: string): Promise<boolean> {
+    const db = await getDatabase()
+    const collection = db.collection<Payment>(COLLECTIONS.PAYMENTS)
+    
+    const existingPayment = await collection.findOne({ transactionHash })
+    return existingPayment !== null
+  }
+
   static async findBySeller(sellerId: string): Promise<Payment[]> {
     const db = await getDatabase()
     const collection = db.collection<Payment>(COLLECTIONS.PAYMENTS)

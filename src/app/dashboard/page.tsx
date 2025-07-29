@@ -46,13 +46,32 @@ export default function DashboardPage() {
   const fetchData = React.useCallback(async () => {
     if (!user?._id) return
 
+    // Get authentication credentials
+    const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+    const walletAddress = user?.walletAddress
+    
+    if (!currentEmail || !walletAddress) {
+      console.error('Authentication required for dashboard data fetch')
+      return
+    }
+
     try {
       setIsLoading(true)
       
       // Fetch products and analytics in parallel
       const [productsRes, analyticsRes] = await Promise.all([
-        fetch(`/api/products?sellerId=${user._id}`),
-        fetch(`/api/analytics/seller/${user._id}`)
+        fetch(`/api/products?sellerId=${user._id}`, {
+          headers: {
+            'x-user-email': currentEmail,
+            'x-wallet-address': walletAddress,
+          }
+        }),
+        fetch(`/api/analytics/seller/${user._id}`, {
+          headers: {
+            'x-user-email': currentEmail,
+            'x-wallet-address': walletAddress,
+          }
+        })
       ])
 
       if (productsRes.ok) {

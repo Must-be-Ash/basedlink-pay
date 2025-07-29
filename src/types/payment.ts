@@ -30,6 +30,9 @@ export interface CreatePaymentRequest {
 export interface UpdatePaymentRequest {
   status?: PaymentStatus
   completedAt?: Date
+  transactionHash?: string
+  amountUSDC?: number
+  toAddress?: string
 }
 
 export interface PaymentWithProduct extends Payment {
@@ -41,4 +44,4 @@ export interface PaymentWithProduct extends Payment {
   }
 }
 
-export type PaymentUpdate = Partial<Pick<Payment, 'status' | 'completedAt'>>
+export type PaymentUpdate = Partial<Pick<Payment, 'status' | 'completedAt' | 'transactionHash' | 'amountUSDC' | 'toAddress'>>

@@ -60,8 +60,8 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
   if (!isMounted || !isInitialized) {
     return (
       <div className={cn("flex flex-col items-center justify-center py-8", className)}>
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-        <p className="text-muted-foreground">Initializing wallet...</p>
+        <Loader2 className="h-8 w-8 animate-spin mb-4" style={{ color: '#ff5941' }} />
+        <p style={{ color: '#6b7280' }}>Initializing wallet...</p>
       </div>
     )
   }
@@ -149,24 +149,24 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
     return (
       <div className={cn("w-full max-w-md mx-auto", className)}>
         <div className="text-center mb-6">
-          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Shield className="w-6 h-6 text-primary" />
+          <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(255, 89, 65, 0.1)' }}>
+            <Shield className="w-6 h-6" style={{ color: '#ff5941' }} />
           </div>
-          <h3 className="text-lg font-semibold">Enter Verification Code</h3>
-          <p className="text-muted-foreground mt-2">
+          <h3 className="text-lg font-semibold" style={{ color: '#1a1a1a' }}>Enter Verification Code</h3>
+          <p className="mt-2" style={{ color: '#6b7280' }}>
             We sent a 6-digit code to <span className="font-medium">{email}</span>
           </p>
         </div>
 
         {authError && (
-          <div className="error-message mb-4">
+          <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fca5a5' }}>
             {authError}
           </div>
         )}
 
         <form onSubmit={handleOtpSubmit} className="space-y-4">
           <div>
-            <label htmlFor="otp" className="block text-sm font-medium mb-2">
+            <label htmlFor="otp" className="block text-sm font-medium mb-2" style={{ color: '#374151' }}>
               Verification Code
             </label>
             <input
@@ -175,7 +175,12 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
               placeholder="000000"
-              className="w-full px-4 py-3 text-center text-2xl font-mono border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-3 text-center text-2xl font-mono rounded-xl border transition-all duration-200"
+              style={{
+                backgroundColor: '#ffffff',
+                borderColor: '#e5e7eb',
+                color: '#1f2937'
+              }}
               maxLength={6}
               disabled={authLoading}
               required
@@ -187,7 +192,11 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
             <button 
               type="submit" 
               disabled={authLoading || otp.length !== 6} 
-              className="w-full bg-primary text-primary-foreground py-3 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+              className="w-full py-3 px-4 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+              style={{ 
+                background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                color: '#ffffff'
+              }}
             >
               {authLoading ? (
                 <div className="flex items-center justify-center">
@@ -206,14 +215,15 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
                 setOtp("")
                 setAuthError(null)
               }}
-              className="w-full text-muted-foreground hover:text-foreground transition-colors"
+              className="w-full py-2 transition-colors"
+              style={{ color: '#6b7280' }}
             >
               Back to Email
             </button>
           </div>
         </form>
         
-        <p className="text-center text-xs text-muted-foreground mt-6">
+        <p className="text-center text-xs mt-6" style={{ color: '#6b7280' }}>
           Powered by <strong>Coinbase Developer Platform</strong>
         </p>
       </div>
@@ -225,37 +235,38 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
     return (
       <div className={cn("w-full max-w-md mx-auto", className)}>
         <div className="text-center mb-6">
-          <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle2 className="w-6 h-6 text-green-600" />
+          <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#dcfce7' }}>
+            <CheckCircle2 className="w-6 h-6" style={{ color: '#16a34a' }} />
           </div>
-          <h3 className="text-lg font-semibold">Wallet Connected</h3>
+          <h3 className="text-lg font-semibold" style={{ color: '#1a1a1a' }}>Wallet Connected</h3>
         </div>
 
         <div className="space-y-4">
-          <div className="border rounded-lg p-4">
-            <label className="block text-sm font-medium text-muted-foreground mb-1">
+          <div className="rounded-xl p-4" style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
+            <label className="block text-sm font-medium mb-1" style={{ color: '#6b7280' }}>
               Email
             </label>
-            <p className="font-medium">{(currentUser as CDPUser)?.email || 'User'}</p>
+            <p className="font-medium" style={{ color: '#1f2937' }}>{(currentUser as CDPUser)?.email || 'User'}</p>
           </div>
           
-          <div className="border rounded-lg p-4">
-            <label className="block text-sm font-medium text-muted-foreground mb-1">
+          <div className="rounded-xl p-4" style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
+            <label className="block text-sm font-medium mb-1" style={{ color: '#6b7280' }}>
               Wallet Address
             </label>
             <div className="flex items-center justify-between">
-              <span className="font-mono text-sm">
+              <span className="font-mono text-sm" style={{ color: '#1f2937' }}>
                 {`${evmAddress.slice(0, 6)}...${evmAddress.slice(-4)}`}
               </span>
               <button
                 onClick={handleCopyAddress}
-                className="ml-2 p-1 hover:bg-muted rounded transition-colors"
+                className="ml-2 p-1 rounded transition-all duration-200 hover:scale-105"
+                style={{ backgroundColor: addressCopied ? '#dcfce7' : '#f8f9fa' }}
                 title="Copy full address"
               >
                 {addressCopied ? (
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <CheckCircle2 className="w-4 h-4" style={{ color: '#16a34a' }} />
                 ) : (
-                  <Copy className="w-4 h-4" />
+                  <Copy className="w-4 h-4" style={{ color: '#6b7280' }} />
                 )}
               </button>
             </div>
@@ -264,7 +275,13 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
 
         <button 
           onClick={handleSignOut} 
-          className="w-full mt-6 border border-input py-2 px-4 rounded-lg hover:bg-muted transition-colors"
+          className="w-full mt-6 py-2 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+          style={{ 
+            backgroundColor: '#f8f9fa',
+            borderColor: '#e5e7eb',
+            color: '#374151',
+            border: '1px solid #e5e7eb'
+          }}
         >
           Sign Out
         </button>
@@ -276,24 +293,24 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
   return (
     <div className={cn("w-full max-w-md mx-auto", className)}>
       <div className="text-center mb-6">
-        <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-          <Mail className="w-6 h-6 text-primary" />
+        <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(255, 89, 65, 0.1)' }}>
+          <Mail className="w-6 h-6" style={{ color: '#ff5941' }} />
         </div>
-        <h3 className="text-lg font-semibold">Connect Your Wallet</h3>
-        <p className="text-muted-foreground mt-2">
+        <h3 className="text-lg font-semibold" style={{ color: '#1a1a1a' }}>Connect Your Wallet</h3>
+        <p className="mt-2" style={{ color: '#6b7280' }}>
           Sign in with your email to access your embedded wallet
         </p>
       </div>
 
       {authError && (
-        <div className="error-message mb-4">
+        <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fca5a5' }}>
           {authError}
         </div>
       )}
 
       <form onSubmit={handleEmailSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-2">
+          <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: '#374151' }}>
             Email Address
           </label>
           <input
@@ -302,7 +319,12 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
-            className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full px-4 py-3 rounded-xl border transition-all duration-200"
+            style={{
+              backgroundColor: '#ffffff',
+              borderColor: '#e5e7eb',
+              color: '#1f2937'
+            }}
             disabled={authLoading}
             required
           />
@@ -311,7 +333,11 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
         <button 
           type="submit" 
           disabled={authLoading || !email} 
-          className="w-full bg-primary text-primary-foreground py-3 px-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+          className="w-full py-3 px-4 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+          style={{ 
+            background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+            color: '#ffffff'
+          }}
         >
           {authLoading ? (
             <div className="flex items-center justify-center">
@@ -324,7 +350,7 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
         </button>
       </form>
       
-      <p className="text-center text-xs text-muted-foreground mt-6">
+      <p className="text-center text-xs mt-6" style={{ color: '#6b7280' }}>
         Powered by <strong>Coinbase Developer Platform</strong>
       </p>
     </div>

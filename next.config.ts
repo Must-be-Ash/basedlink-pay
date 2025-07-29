@@ -3,11 +3,22 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   serverExternalPackages: ['mongodb'],
   images: {
-    domains: ['localhost', 'stablelink.xyz'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '*.vercel-storage.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'stablelink.xyz',
         port: '',
         pathname: '/**',
       },

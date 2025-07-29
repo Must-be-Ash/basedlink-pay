@@ -6,6 +6,7 @@ import { useUserSession } from "@/hooks/useUserSession"
 import { OnboardingForm } from "@/components/OnboardingForm"
 import { CDPProvider } from "@/components/CDPProvider"
 import { PageLoading } from "@/components/Loading"
+import { Container } from "@/components/Container"
 import type { User } from "@/types/user"
 
 export default function OnboardingPage() {
@@ -60,10 +61,14 @@ export default function OnboardingPage() {
 
   return (
     <CDPProvider>
-      <OnboardingForm 
-        user={user}
-        onComplete={handleOnboardingComplete}
-      />
+      <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
+        <Container>
+          <OnboardingForm 
+            user={user}
+            onComplete={handleOnboardingComplete}
+          />
+        </Container>
+      </div>
     </CDPProvider>
   )
 } 
