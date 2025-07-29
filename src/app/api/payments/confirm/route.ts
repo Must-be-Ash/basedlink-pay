@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       transactionHash,
       product.priceUSDC.toString(),
       expectedRecipient,
-      3 // Require 3 confirmations
+      1 // Require 1 confirmation (reduced for better UX)
     )
 
     if (!verificationResult.isValid) {

@@ -19,7 +19,7 @@ import type { Product, ProductWithSeller } from "@/types/product"
 
 interface PaymentButtonProps {
   product: Product | ProductWithSeller
-  onPaymentSuccess?: (txHash: string) => void
+  onPaymentSuccess?: (data: { txHash: string; paymentId: string }) => void
   onPaymentError?: (error: string) => void
   disabled?: boolean
   className?: string
@@ -37,7 +37,6 @@ export function PaymentButton({
   const { openOnramp, isCreatingSession } = useOnramp()
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'confirming' | 'success' | 'error' | 'insufficient_balance'>('idle')
   const [txHash, setTxHash] = useState<string | null>(null)
-  const [paymentId, setPaymentId] = useState<string | null>(null)
 
   // Use the new useWalletBalance hook
   const { 
@@ -66,6 +65,11 @@ export function PaymentButton({
 
     if (!recipientAddress) {
       toast.error("No recipient address configured for this product", { duration: 1000 })
+      return
+    }
+
+    // Prevent duplicate payment attempts
+    if (paymentStatus === 'processing' || paymentStatus === 'confirming' || isLoading) {
       return
     }
 
@@ -101,7 +105,6 @@ export function PaymentButton({
       }
 
       const { data: payment } = await paymentResponse.json()
-      setPaymentId(payment._id)
 
       // Step 2: Send the transaction
       const txHash = await sendUSDCPayment(
@@ -112,34 +115,66 @@ export function PaymentButton({
       setTxHash(txHash)
       setPaymentStatus('confirming')
 
-      // Step 3: Confirm payment with blockchain verification
-      const confirmResponse = await fetch('/api/payments/confirm', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          transactionHash: txHash,
-          paymentId: paymentId,
-        }),
-      })
+      // Step 3: Confirm payment with blockchain verification (with retry)
+      let confirmationAttempts = 0
+      const maxAttempts = 3
+      const retryDelay = 2000 // 2 seconds
+      
+      while (confirmationAttempts < maxAttempts) {
+        try {
+          const confirmResponse = await fetch('/api/payments/confirm', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              transactionHash: txHash,
+              paymentId: payment._id, // Use direct value instead of state
+            }),
+          })
 
-      if (!confirmResponse.ok) {
-        const errorData = await confirmResponse.json()
-        throw new Error(errorData.error || 'Payment confirmation failed')
+          if (confirmResponse.ok) {
+            // Success! Break out of retry loop
+            break
+          }
+          
+          const errorData = await confirmResponse.json()
+          const errorMessage = errorData.error || 'Payment confirmation failed'
+          
+          // If it's a confirmation issue, retry
+          if (errorMessage.includes('confirmations') && confirmationAttempts < maxAttempts - 1) {
+            confirmationAttempts++
+            console.log(`⏳ Transaction not confirmed yet, retrying in ${retryDelay}ms... (attempt ${confirmationAttempts}/${maxAttempts})`)
+            await new Promise(resolve => setTimeout(resolve, retryDelay))
+            continue
+          }
+          
+          // If it's not a confirmation issue or we've exceeded retries, throw error
+          throw new Error(errorMessage)
+          
+        } catch (error) {
+          if (confirmationAttempts >= maxAttempts - 1) {
+            throw error
+          }
+          confirmationAttempts++
+          console.log(`⏳ Confirmation failed, retrying in ${retryDelay}ms... (attempt ${confirmationAttempts}/${maxAttempts})`)
+          await new Promise(resolve => setTimeout(resolve, retryDelay))
+        }
       }
 
       setPaymentStatus('success')
-      onPaymentSuccess?.(txHash)
+      onPaymentSuccess?.({ txHash, paymentId: payment._id })
       toast.success("Payment confirmed on blockchain!", { duration: 1000 })
       
     } catch (error) {
       console.error("Payment failed:", error)
       const errorMessage = error instanceof Error ? error.message : "Payment failed"
       
-      // Check again if it's a balance issue (double-check)
+      // Check if it's a balance issue (including gas fees)
       if (errorMessage.includes("transfer amount exceeds balance") || 
-          errorMessage.includes("Insufficient USDC balance")) {
+          errorMessage.includes("Insufficient USDC balance") ||
+          errorMessage.includes("Insufficient balance to execute the transaction") ||
+          errorMessage.includes("insufficient funds")) {
         setPaymentStatus('insufficient_balance')
         recheckBalance()
       } else {
@@ -148,7 +183,7 @@ export function PaymentButton({
         toast.error(errorMessage, { duration: 1000 })
       }
     }
-  }, [isAuthenticated, walletAddress, recipientAddress, hasEnoughBalance, sendUSDCPayment, product, onPaymentSuccess, onPaymentError, recheckBalance, authCredentials.email, paymentId])
+  }, [isAuthenticated, walletAddress, recipientAddress, hasEnoughBalance, sendUSDCPayment, product, onPaymentSuccess, onPaymentError, recheckBalance, authCredentials.email, isLoading, paymentStatus])
 
   const handleFundWallet = async () => {
     await openOnramp(product.priceUSDC.toString())
@@ -157,7 +192,6 @@ export function PaymentButton({
   const resetPayment = () => {
     setPaymentStatus('idle')
     setTxHash(null)
-    setPaymentId(null)
     recheckBalance() // Refresh balance
   }
 
@@ -234,7 +268,9 @@ export function PaymentButton({
               {checkingBalance ? (
                 <Loader2 className="w-4 h-4 animate-spin inline" />
               ) : (
-                `${formattedBalance} USDC`
+                formattedBalance.includes('needs ETH for gas') ? 
+                  formattedBalance : 
+                  `${formattedBalance} USDC`
               )}
             </span>
           </div>
@@ -242,7 +278,11 @@ export function PaymentButton({
           {/* Minimal insufficient funds notice */}
           <div className="pt-2 pb-1" style={{ borderTop: '1px solid #fee2e2' }}>
             <p className="text-xs text-center" style={{ color: '#dc2626' }}>
-              Insufficient balance • Need {(product.priceUSDC - parseFloat(formattedBalance)).toFixed(2)} more USDC
+              {formattedBalance.includes('needs ETH for gas') ? (
+                "Need ETH for transaction fees"
+              ) : (
+                `Insufficient balance • Need ${(product.priceUSDC - parseFloat(formattedBalance.replace(/[^\d.]/g, ''))).toFixed(2)} more USDC`
+              )}
             </p>
           </div>
         </div>

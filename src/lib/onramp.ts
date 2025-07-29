@@ -37,47 +37,93 @@ export async function checkWalletBalance(
   }
 
   try {
-    // Check USDC balance using ERC20 balanceOf method
-    const response = await fetch(BASE_RPC_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "eth_call",
-        params: [
-          {
-            to: USDC_CONTRACT_ADDRESS,
-            data: `0x70a08231000000000000000000000000${address.slice(2)}`
-          },
-          "latest"
-        ],
-        id: 1,
+    // Check both USDC and ETH balances
+    const [usdcResponse, ethResponse] = await Promise.all([
+      // USDC balance
+      fetch(BASE_RPC_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "eth_call",
+          params: [
+            {
+              to: USDC_CONTRACT_ADDRESS,
+              data: `0x70a08231000000000000000000000000${address.slice(2)}`
+            },
+            "latest"
+          ],
+          id: 1,
+        }),
       }),
-    })
+      // ETH balance for gas
+      fetch(BASE_RPC_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "eth_getBalance",
+          params: [address, "latest"],
+          id: 2,
+        }),
+      })
+    ])
 
-    const data = await response.json()
+    const [usdcData, ethData] = await Promise.all([
+      usdcResponse.json(),
+      ethResponse.json()
+    ])
     
-    if (data.error) {
-      throw new Error(data.error.message)
+    if (usdcData.error) {
+      throw new Error(usdcData.error.message)
+    }
+    if (ethData.error) {
+      throw new Error(ethData.error.message)
     }
 
-    const balanceHex = data.result
+    const balanceHex = usdcData.result
     const balanceWei = BigInt(balanceHex)
     const requiredWei = BigInt(Math.floor(Number.parseFloat(requiredAmount) * 1e6)) // USDC has 6 decimals
     
     const balanceUsdc = Number(balanceWei) / 1e6
     const formattedBalance = balanceUsdc.toFixed(2)
     
+    // Check ETH balance for gas (estimate ~0.0002 ETH needed for gas on Base)
+    const ethBalanceWei = BigInt(ethData.result)
+    const minGasEth = BigInt(2e14) // 0.0002 ETH in wei (more realistic for Base network)
+    const hasEnoughGas = ethBalanceWei >= minGasEth
+    
+    const hasEnoughUsdc = balanceWei >= requiredWei
+    const hasEnoughBalance = hasEnoughUsdc && hasEnoughGas
+    
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Balance check:', {
+        address: address.slice(0, 6) + '...' + address.slice(-4),
+        usdcBalance: balanceUsdc.toFixed(6),
+        ethBalanceWei: ethBalanceWei.toString(),
+        ethBalanceEth: (Number(ethBalanceWei) / 1e18).toFixed(6),
+        minGasRequired: (Number(minGasEth) / 1e18).toFixed(6),
+        hasEnoughUsdc,
+        hasEnoughGas,
+        hasEnoughBalance
+      })
+    }
+    
+    // Add gas warning to balance display if needed
+    let displayBalance = formattedBalance
+    if (hasEnoughUsdc && !hasEnoughGas) {
+      displayBalance = `${formattedBalance} (needs ETH for gas)`
+    }
+    
     return {
-      hasEnoughBalance: balanceWei >= requiredWei,
+      hasEnoughBalance,
       currentBalance: balanceWei.toString(),
-      formattedBalance,
+      formattedBalance: displayBalance,
       isChecking: false,
     }
   } catch (error) {
-    console.error("Error checking USDC balance:", error)
+    console.error("Error checking wallet balance:", error)
     return {
       hasEnoughBalance: false,
       currentBalance: "0",

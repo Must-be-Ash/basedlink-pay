@@ -11,10 +11,11 @@ import { formatCurrency } from "@/lib/utils"
 import { CDPProvider } from "@/components/CDPProvider"
 import { WalletAuth } from "@/components/WalletAuth"
 import { useUserSession } from "@/hooks/useUserSession"
-import { User, CheckCircle, AlertCircle, CreditCard } from "lucide-react"
+import { User, AlertCircle, CreditCard } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { TextShimmer } from "@/components/ui/text-shimmer"
+import { PaymentSuccess } from "@/components/PaymentSuccess"
 import type { ProductWithSeller } from "@/types/product"
 
 export default function PaymentPage() {
@@ -25,6 +26,8 @@ export default function PaymentPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [transactionHash, setTransactionHash] = useState<string>("")
+  const [paymentId, setPaymentId] = useState<string>("")
 
   const fetchProduct = React.useCallback(async () => {
     try {
@@ -51,10 +54,12 @@ export default function PaymentPage() {
     }
   }, [slug, fetchProduct])
 
-  const handlePaymentSuccess = (txHash: string) => {
+  const handlePaymentSuccess = (data: { txHash: string; paymentId: string }) => {
     setPaymentSuccess(true)
+    setTransactionHash(data.txHash)
+    setPaymentId(data.paymentId)
     // Could also record the payment here via API
-    console.log('Payment successful with hash:', txHash)
+    console.log('Payment successful with hash:', data.txHash)
   }
 
   const handlePaymentError = (error: string) => {
@@ -95,28 +100,11 @@ export default function PaymentPage() {
   if (paymentSuccess) {
     return (
       <CDPProvider>
-        <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
-          <Container className="py-16">
-            <div className="max-w-md mx-auto text-center">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#dcfce7' }}>
-                <CheckCircle className="w-8 h-8" style={{ color: '#16a34a' }} />
-              </div>
-              <h1 className="text-2xl font-bold mb-4" style={{ color: '#1f2937' }}>Payment Successful!</h1>
-              <p className="mb-6" style={{ color: '#6b7280' }}>
-                Thank you for your payment. Your transaction has been processed successfully.
-              </p>
-              <div className="text-left p-4 rounded-lg mb-6" style={{ backgroundColor: '#f3f4f6' }}>
-                <p className="text-sm mb-1" style={{ color: '#6b7280' }}>Purchased:</p>
-                <p className="font-medium" style={{ color: '#1f2937' }}>{product.name}</p>
-                <p className="text-sm mt-2 mb-1" style={{ color: '#6b7280' }}>Amount:</p>
-                <p className="font-medium" style={{ color: '#1f2937' }}>{formatCurrency(product.priceUSD)}</p>
-              </div>
-              <Link href="/" className="hover:underline" style={{ color: '#3b82f6' }}>
-                Return to Homepage
-              </Link>
-            </div>
-          </Container>
-        </div>
+        <PaymentSuccess
+          product={product}
+          transactionHash={transactionHash}
+          paymentId={paymentId}
+        />
       </CDPProvider>
     )
   }

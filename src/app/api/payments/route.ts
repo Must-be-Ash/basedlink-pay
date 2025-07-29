@@ -66,6 +66,20 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Payment amount does not match product price', 400)
     }
 
+    // For pending payments, check and clean up any existing pending payments for same user/product
+    if (isPendingPayment) {
+      const db = await (await import('@/lib/mongodb')).getDatabase()
+      const collection = db.collection('payments')
+      
+      // Remove any existing pending payments for this user/product combination
+      await collection.deleteMany({
+        productId: new (await import('mongodb')).ObjectId(validation.data.productId),
+        buyerWalletAddress: validation.data.buyerWalletAddress,
+        status: 'pending',
+        transactionHash: null
+      })
+    }
+
     // For payments with transaction hash, check if it already exists
     if (!isPendingPayment && 'transactionHash' in validation.data && validation.data.transactionHash) {
       const existingPayment = await PaymentModel.findByTransactionHash(validation.data.transactionHash as string)
