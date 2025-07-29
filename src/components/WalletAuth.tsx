@@ -298,7 +298,7 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
         </div>
         <h3 className="text-lg font-semibold" style={{ color: '#1a1a1a' }}>Connect Your Wallet</h3>
         <p className="mt-2" style={{ color: '#6b7280' }}>
-          Sign in with your email to access your embedded wallet
+          Sign in with your email
         </p>
       </div>
 
@@ -345,7 +345,7 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
               Sending...
             </div>
           ) : (
-            "Sign In with Coinbase"
+            "Sign-in / Sign-up"
           )}
         </button>
       </form>
