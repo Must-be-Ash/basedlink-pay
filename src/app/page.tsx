@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, LayoutGroup } from "motion/react"
 import { Button3D } from "@/components/ui/button-3d"
+import { RainbowButton } from "@/components/ui/rainbow-button"
 import { TextRotate } from "@/components/ui/text-rotate"
 import { TextShimmer } from "@/components/ui/text-shimmer"
 import { VideoModal } from "@/components/ui/video-modal"
@@ -49,16 +50,13 @@ export default function HomePage() {
         
         {/* GitHub Header */}
         <div className="pt-12 pb-2 text-center">
-          <a 
-            href="https://github.com/Must-be-Ash/basedlink-pay"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-full transition-all duration-200 hover:opacity-80 hover:scale-105"
-            style={{ backgroundColor: '#f5f5f5', color: '#666666', border: '1px solid #e0e0e0' }}
+          <RainbowButton
+            onClick={() => window.open('https://github.com/Must-be-Ash/basedlink-pay', '_blank')}
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white transition-all duration-200 hover:scale-105"
           >
-            <Github className="w-4 h-4 text-white bg-[#444444] rounded-full p-0.5" />
+            <Github className="w-4 h-4" />
             Fork this project on GitHub
-          </a>
+          </RainbowButton>
         </div>
         
         {/* Hero Section */}

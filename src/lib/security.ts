@@ -5,6 +5,8 @@ import type { User } from '../types/user'
 const ALLOWED_ORIGINS = [
   'https://basedlink.xyz',
   'https://www.basedlink.xyz',
+  'https://www.stablelink.xyz',
+  'https://stablelink.xyz',
   // Add development origins
   'http://localhost:3000',
   'http://127.0.0.1:3000',
