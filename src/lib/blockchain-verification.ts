@@ -117,7 +117,7 @@ export async function verifyUSDCTransaction(
             break
           }
         }
-      } catch (parseError) {
+      } catch {
         // Skip logs that can't be parsed
         continue
       }
