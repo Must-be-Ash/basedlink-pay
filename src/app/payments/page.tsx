@@ -305,14 +305,14 @@ export default function PaymentsPage() {
           }}
         >
           <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
+            <div className="flex flex-col gap-4">
+              <div className="relative w-full">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#6b7280' }} />
                 <Input
                   placeholder="Search by email, transaction hash, or product..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 rounded-xl border-0 text-base"
+                  className="pl-12 h-12 rounded-xl border-0 text-base w-full"
                   style={{ 
                     backgroundColor: '#f9fafb',
                     color: '#1f2937'
@@ -320,12 +320,12 @@ export default function PaymentsPage() {
                 />
               </div>
               
-              <div className="flex gap-3">
+              <div className="grid grid-cols-2 sm:flex sm:gap-3 gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setStatusFilter("all")}
-                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  className="h-12 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105 text-sm"
                   style={statusFilter === "all" ? { 
                     background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
                     border: 'none',
@@ -342,7 +342,7 @@ export default function PaymentsPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setStatusFilter("completed")}
-                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  className="h-12 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105 text-sm"
                   style={statusFilter === "completed" ? { 
                     background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
                     border: 'none',
@@ -359,7 +359,7 @@ export default function PaymentsPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setStatusFilter("pending")}
-                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  className="h-12 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105 text-sm"
                   style={statusFilter === "pending" ? { 
                     background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
                     border: 'none',
@@ -376,7 +376,7 @@ export default function PaymentsPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setStatusFilter("failed")}
-                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  className="h-12 px-3 sm:px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105 text-sm"
                   style={statusFilter === "failed" ? { 
                     background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
                     border: 'none',

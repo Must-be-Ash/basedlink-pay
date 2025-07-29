@@ -134,8 +134,8 @@ export default function ProductsPage() {
       
       <Container className="py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
+          <div className="mb-6 md:mb-0">
             <h1 className="text-3xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
               Products
             </h1>
@@ -146,7 +146,7 @@ export default function ProductsPage() {
           <Link href="/products/new">
             <Button3D
               size="lg"
-              className="text-white text-base px-6 py-3 h-auto rounded-xl font-medium transition-all duration-200 hover:scale-105"
+              className="text-white text-base px-6 py-3 h-auto rounded-xl font-medium transition-all duration-200 hover:scale-105 w-full md:w-auto"
               style={{ 
                 background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
               }}

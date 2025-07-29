@@ -203,11 +203,11 @@ export default function DashboardPage() {
       <Container className="py-8">
         {/* Welcome Section */}
         <div className="mb-12">
-          <div className="flex items-center justify-between">
-            <div>
-                              <h1 className="text-3xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
-                  Welcome back, {user?.name || 'User'}
-                </h1>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="mb-6 md:mb-0">
+              <h1 className="text-3xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
+                Welcome back, {user?.name || 'User'}
+              </h1>
               <p className="text-lg leading-relaxed" style={{ color: '#6b7280' }}>
                 Here&apos;s what&apos;s happening with your crypto payments
               </p>
@@ -215,7 +215,7 @@ export default function DashboardPage() {
             <Link href="/products/new">
               <Button3D
                 size="lg"
-                className="text-white text-base px-6 py-3 h-auto rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                className="text-white text-base px-6 py-3 h-auto rounded-xl font-medium transition-all duration-200 hover:scale-105 w-full md:w-auto"
                 style={{ 
                   background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
                 }}
@@ -355,13 +355,13 @@ export default function DashboardPage() {
                   <Link href="/products/new">
                     <Button3D
                       size="default"
-                      className="text-white text-sm px-4 py-2 h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                      className="text-white text-sm px-3 md:px-4 py-2 h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105"
                       style={{ 
                         background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
                       }}
                     >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Product
+                      <Plus className="w-4 h-4 md:mr-2" />
+                      <span className="hidden md:inline">Add Product</span>
                     </Button3D>
                   </Link>
                 </div>

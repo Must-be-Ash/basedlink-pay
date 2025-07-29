@@ -100,48 +100,50 @@ export default function HomePage() {
             </LayoutGroup>
 
   {/* Subtitle */}
-  <motion.p 
+  <motion.div 
               className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-6 max-w-2xl mx-auto leading-relaxed px-4"
               style={{ color: '#666666' }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             >
-              List Product. Share Your Link. Get Paid.
-            </motion.p>
+              <span className="block sm:inline">List Product.</span>
+              <span className="block sm:inline"> Share Your Link.</span>
+              <span className="block sm:inline"> Get Paid.</span>
+            </motion.div>
       
 
  {/* Features Section */}
  <motion.div 
-          className="py-3 sm:py-4 opacity-75"
+          className="pt-6 pb-2 sm:py-4 opacity-75"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 0.75, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-12">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-0">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-6 sm:pb-12">
+            <div className="grid grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-0">
               
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
-                  <Zap className="w-6 h-6" style={{ color: '#ff5941' }} />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-4 rounded-lg sm:rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <Zap className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#ff5941' }} />
                 </div>
-                <h3 className="text-l font-light mb-2" style={{ color: '#3B3B3B' }}>Instant Payments</h3>
+                <h3 className="text-xs sm:text-l font-light mb-1 sm:mb-2" style={{ color: '#3B3B3B' }}>Instant Payments</h3>
 
               </div>
 
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
-                  <DollarSign className="w-6 h-6" style={{ color: '#ff5941' }} />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-4 rounded-lg sm:rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <DollarSign className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#ff5941' }} />
                 </div>
-                <h3 className="text-l font-light mb-2" style={{ color: '#3B3B3B' }}>0% Platform Fees</h3>
+                <h3 className="text-xs sm:text-l font-light mb-1 sm:mb-2" style={{ color: '#3B3B3B' }}>0% Platform Fees</h3>
 
               </div>
 
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
-                  <Globe className="w-6 h-6" style={{ color: '#ff5941' }} />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-4 rounded-lg sm:rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <Globe className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#ff5941' }} />
                 </div>
-                <h3 className="text-l font-light mb-2" style={{ color: '#3B3B3B' }}>Global Reach</h3>
+                <h3 className="text-xs sm:text-l font-light mb-1 sm:mb-2" style={{ color: '#3B3B3B' }}>Global Reach</h3>
 
               </div>
 
@@ -153,7 +155,7 @@ export default function HomePage() {
 
             {/* CTA Buttons */}
             <motion.div
-              className="flex flex-col items-center gap-4 mt-2"
+              className="flex flex-col items-center gap-4 mt-8 sm:mt-2"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
