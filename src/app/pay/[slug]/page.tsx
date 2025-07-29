@@ -11,7 +11,7 @@ import { formatCurrency } from "@/lib/utils"
 import { CDPProvider } from "@/components/CDPProvider"
 import { WalletAuth } from "@/components/WalletAuth"
 import { useUserSession } from "@/hooks/useUserSession"
-import { User, CheckCircle, AlertCircle, CreditCard, Wallet } from "lucide-react"
+import { User, CheckCircle, AlertCircle, CreditCard } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { TextShimmer } from "@/components/ui/text-shimmer"
@@ -196,23 +196,18 @@ export default function PaymentPage() {
 
                 {/* Payment Section */}
                 <div>
-                  <div className="flex items-center space-x-2 mb-6">
-                    <CreditCard className="w-5 h-5" style={{ color: '#6b7280' }} />
-                    <h2 className="text-lg font-semibold" style={{ color: '#1f2937' }}>Payment</h2>
-                  </div>
+                  {isAuthenticated && (
+                    <div className="flex items-center space-x-2 mb-6">
+                      <CreditCard className="w-5 h-5" style={{ color: '#6b7280' }} />
+                      <h2 className="text-lg font-semibold" style={{ color: '#1f2937' }}>Payment</h2>
+                    </div>
+                  )}
 
                   {!isAuthenticated ? (
                     <div className="space-y-6">
-                      <div className="text-center space-y-4">
-                        <Wallet className="mx-auto h-12 w-12" style={{ color: '#9ca3af' }} />
-                        <div>
-                          <h3 className="font-semibold text-lg mb-2" style={{ color: '#1f2937' }}>Connect Your Wallet</h3>
-                          <p className="text-sm leading-relaxed" style={{ color: '#6b7280' }}>
-                            Please connect your wallet to make a payment
-                          </p>
-                        </div>
+                      <div className="minimal-wallet-auth">
+                        <WalletAuth />
                       </div>
-                      <WalletAuth />
                     </div>
                   ) : (
                     <PaymentButton

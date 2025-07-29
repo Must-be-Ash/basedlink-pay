@@ -220,3 +220,8 @@ body {
     cursor: pointer !important;
   }
 }
+
+/* Minimal wallet auth styles for payment page */
+.minimal-wallet-auth .text-center.mb-6:first-child {
+  display: none;
+}
