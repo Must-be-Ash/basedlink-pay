@@ -4,21 +4,13 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Container } from "@/components/Container"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { CDPProvider } from "@/components/CDPProvider"
 import { WalletAuth } from "@/components/WalletAuth"
 import { useUserSession } from "@/hooks/useUserSession"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { 
-  Shield, 
-  Zap, 
-  Lock, 
-  Smartphone,
-  ArrowLeft
-} from "lucide-react"
-import Link from "next/link"
 import type { CDPUser } from "@/types/cdp"
 
 export default function AuthPage() {
@@ -65,168 +57,110 @@ export default function AuthPage() {
 
   return (
     <CDPProvider>
-      <div className="min-h-screen bg-background">
-        <Container className="py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <Link href="/">
-              <Button variant="ghost" className="mb-4">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
-            </Link>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-3xl font-bold mb-4">Connect Your Wallet</h1>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Get started with crypto payments in seconds. No wallet downloads or complex setup required.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Authentication Form */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    {needsEmailInput ? "Complete Your Profile" : "Sign In with Email"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {needsEmailInput ? (
-                    <div className="space-y-4">
-                      <p className="text-muted-foreground mb-4">
+      <style>{`
+        .wallet-auth-container {
+          --primary: #ff5941;
+          --primary-rgb: 255, 89, 65;
+          --primary-foreground: #ffffff;
+        }
+        .wallet-auth-container [class*="bg-primary/10"] {
+          background-color: rgba(var(--primary-rgb), 0.1) !important;
+        }
+        .wallet-auth-container [class*="text-primary"]:not([class*="text-primary-foreground"]) {
+          color: var(--primary) !important;
+        }
+        .wallet-auth-container [class*="bg-primary"]:not([class*="bg-primary/"]) {
+          background: linear-gradient(to bottom, #ff6d41, #ff5420) !important;
+        }
+        .wallet-auth-container [class*="text-primary-foreground"] {
+          color: var(--primary-foreground) !important;
+        }
+        .wallet-auth-container button[class*="bg-primary"]:hover {
+          background: linear-gradient(to bottom, #ff6d41, #ff5420) !important;
+          opacity: 0.9;
+        }
+        .wallet-auth-container input:focus {
+          --tw-ring-color: var(--primary) !important;
+          border-color: var(--primary) !important;
+        }
+      `}</style>
+      
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F2F2F2' }}>
+        <Container className="py-8 px-4 w-full">
+          <div className="max-w-md mx-auto w-full">
+            
+            {needsEmailInput ? (
+              <Card 
+                className="border-0 transition-all duration-300 hover:shadow-xl"
+                style={{ 
+                  backgroundColor: '#ffffff',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                  borderRadius: '16px'
+                }}
+              >
+                <CardContent className="p-8">
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <h1 className="text-2xl font-bold mb-3" style={{ color: '#1a1a1a' }}>
+                        Complete Your Profile
+                      </h1>
+                      <p className="leading-relaxed" style={{ color: '#6b7280' }}>
                         Your wallet is connected! Please provide your email address to complete setup.
                       </p>
-                      <form onSubmit={handleEmailSubmit} className="space-y-4">
-                        <div>
-                          <Label htmlFor="email">Email Address</Label>
-                          <Input 
-                            id="email"
-                            type="email"
-                            value={emailInput}
-                            onChange={(e) => setEmailInput(e.target.value)}
-                            placeholder="your@email.com"
-                            required
-                            disabled={emailSubmitting}
-                          />
-                        </div>
-                        <Button 
-                          type="submit" 
-                          className="w-full"
-                          disabled={emailSubmitting || !emailInput.trim()}
-                        >
-                          {emailSubmitting ? "Setting up..." : "Continue"}
-                        </Button>
-                      </form>
                     </div>
-                  ) : (
-                    <WalletAuth onAuthSuccess={handleAuthSuccess} />
-                  )}
+                    
+                    <form onSubmit={handleEmailSubmit} className="space-y-4">
+                      <div>
+                        <Label htmlFor="email" className="text-sm font-medium" style={{ color: '#374151' }}>
+                          Email Address
+                        </Label>
+                        <Input 
+                          id="email"
+                          type="email"
+                          value={emailInput}
+                          onChange={(e) => setEmailInput(e.target.value)}
+                          placeholder="your@email.com"
+                          required
+                          disabled={emailSubmitting}
+                          className="h-12 rounded-xl border transition-all duration-200 mt-2"
+                          style={{
+                            backgroundColor: '#ffffff',
+                            borderColor: '#e5e7eb',
+                            color: '#1f2937'
+                          }}
+                        />
+                      </div>
+                      <Button 
+                        type="submit" 
+                        className="w-full h-12 rounded-xl font-medium transition-all duration-200"
+                        disabled={emailSubmitting || !emailInput.trim()}
+                        style={{ 
+                          background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                          color: '#ffffff'
+                        }}
+                      >
+                        {emailSubmitting ? "Setting up..." : "Continue"}
+                      </Button>
+                    </form>
+                  </div>
                 </CardContent>
               </Card>
-
-              {/* Features */}
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold">Why Choose Email Wallet?</h2>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mt-1">
-                      <Zap className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Instant Setup</h3>
-                      <p className="text-sm text-muted-foreground">
-                        No downloads, browser extensions, or seed phrases. 
-                        Just sign in with your email and start accepting payments.
-                      </p>
-                    </div>
+            ) : (
+              <Card 
+                className="border-0 transition-all duration-300 hover:shadow-xl"
+                style={{ 
+                  backgroundColor: '#ffffff',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                  borderRadius: '16px'
+                }}
+              >
+                <CardContent className="p-8">
+                  <div className="wallet-auth-container">
+                    <WalletAuth onAuthSuccess={handleAuthSuccess} />
                   </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mt-1">
-                      <Shield className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Enterprise Security</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Your wallet is secured by Coinbase&apos;s institutional-grade 
-                        infrastructure with multi-party computation.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mt-1">
-                      <Lock className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Self-Custody</h3>
-                      <p className="text-sm text-muted-foreground">
-                        You maintain full control of your funds. 
-                        Coinbase cannot access or freeze your wallet.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mt-1">
-                      <Smartphone className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Cross-Device Access</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Access your wallet from any device by signing in with 
-                        your email. No need to transfer seed phrases.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-muted rounded-lg">
-                  <h4 className="font-medium mb-2">How it works:</h4>
-                  <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                    <li>Enter your email address</li>
-                    <li>Check your email for a verification code</li>
-                    <li>Enter the code to create your wallet</li>
-                    <li>Start accepting crypto payments immediately</li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="mt-16 text-center">
-              <p className="text-sm text-muted-foreground mb-6">
-                Trusted by thousands of creators and businesses
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">99.9%</div>
-                  <div className="text-sm text-muted-foreground">Uptime</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">$50M+</div>
-                  <div className="text-sm text-muted-foreground">Secured</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">24/7</div>
-                  <div className="text-sm text-muted-foreground">Support</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="mt-16 text-center">
-              <p className="text-xs text-muted-foreground">
-                By connecting your wallet, you agree to our Terms of Service and Privacy Policy.
-                <br />
-                Powered by Coinbase Developer Platform • Built on Base Network
-              </p>
-            </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </Container>
       </div>

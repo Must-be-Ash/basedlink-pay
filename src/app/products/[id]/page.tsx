@@ -7,7 +7,7 @@ import { Container } from "@/components/Container"
 import { Button } from "@/components/ui/button"
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 // import { Badge } from "@/components/ui/badge"
-import { Loading } from "@/components/Loading"
+import { PageLoading } from "@/components/Loading"
 import { useUserSession } from "@/hooks/useUserSession"
 import { formatCurrency, formatAddress } from "@/lib/utils"
 import { 
@@ -129,16 +129,7 @@ export default function ProductDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
-        <Header />
-        <Container className="py-8">
-          <div className="max-w-md mx-auto">
-            <div className="p-8 rounded-xl border text-center" style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
-              <Loading size="lg" text="Loading product..." />
-            </div>
-          </div>
-        </Container>
-      </div>
+      <PageLoading text="Loading product..." />
     )
   }
 

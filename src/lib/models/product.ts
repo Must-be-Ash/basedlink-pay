@@ -157,7 +157,8 @@ export class ProductModel {
           'seller.username': 1,
           'seller.name': 1,
           'seller.email': 1,
-          'seller.walletAddress': 1
+          'seller.walletAddress': 1,
+          'seller.profileImageUrl': 1
         }
       }
     ]).toArray()

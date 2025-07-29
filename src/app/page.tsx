@@ -1,17 +1,20 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Container } from "@/components/Container"
+import { motion, LayoutGroup } from "motion/react"
+import { Button3D } from "@/components/ui/button-3d"
+import { TextRotate } from "@/components/ui/text-rotate"
+import { TextShimmer } from "@/components/ui/text-shimmer"
+import { VideoModal } from "@/components/ui/video-modal"
 import { CDPProvider } from "@/components/CDPProvider"
 import { useUserSession } from "@/hooks/useUserSession"
-import { ArrowRight, Zap, Globe, Shield, DollarSign } from "lucide-react"
+import { Zap, DollarSign, Globe, Github } from "lucide-react"
 
 export default function HomePage() {
   const router = useRouter()
   const { isAuthenticated } = useUserSession()
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
@@ -20,160 +23,205 @@ export default function HomePage() {
       router.push('/auth')
     }
   }
+
+  const products = [
+    "digital products",
+    "online courses", 
+    "memberships",
+    "consultations",
+    "services",
+    "donations",
+    "subscriptions",
+    "events",
+    "downloads",
+    "physical goods"
+  ]
   
   return (
     <CDPProvider>
-      <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-b from-primary/5 to-background">
-        <Container>
-          <div className="text-center max-w-4xl mx-auto">
-            <Badge variant="secondary" className="mb-6">
-              Powered by Coinbase Developer Platform
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Accept Crypto Payments
-              <span className="text-primary block">Like Stripe Link</span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Create products, generate shareable payment links, and accept crypto payments instantly. 
-              No wallet downloads or complex setup required for your customers.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={handleGetStarted} size="lg" className="min-w-[200px]">
-                Get Started Free
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Button variant="outline" size="lg" className="min-w-[200px]">
-                View Demo
-              </Button>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20">
-        <Container>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Why Choose Crypto Payments?</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Experience the benefits of crypto payments with the simplicity of traditional payment processors.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader>
-                <Zap className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Instant Payments</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Receive payments in seconds, not days. Base network ensures fast confirmation times.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <DollarSign className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Low Fees</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Pay ~$0.01 per transaction instead of 2.9% + 30¢ with traditional processors.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Globe className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Global Reach</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Accept payments from anywhere in the world without geographic restrictions.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Shield className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">No Wallet Needed</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Customers pay with just their email - wallets are created automatically and securely.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </Container>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="py-20 bg-muted/30">
-        <Container>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">How It Works</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Simple steps to start accepting crypto payments
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                1
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Create Product</h3>
-              <p className="text-muted-foreground">
-                Add your product details, description, and set a price in USD.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                2
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Share Link</h3>
-              <p className="text-muted-foreground">
-                Get a shareable payment link and distribute it to your customers.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                3
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Get Paid</h3>
-              <p className="text-muted-foreground">
-                Customers pay with their email and you receive USDC instantly.
-              </p>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20">
-        <Container>
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4">Ready to Start?</h2>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of creators and businesses accepting crypto payments with ease.
-            </p>
-            <Button onClick={handleGetStarted} size="lg">
-              Create Your First Product
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+      <style jsx>{`
+        .text-rotate-orange {
+          background-color: #ff5941;
+        }
+      `}</style>
+      
+      <div className="min-h-screen w-full flex flex-col" style={{ backgroundColor: '#ffffff' }}>
+        
+        {/* GitHub Header */}
+        <div className="pt-12 pb-2 text-center">
+          <a 
+            href="https://github.com/Must-be-Ash/basedlink-pay"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-full transition-all duration-200 hover:opacity-80 hover:scale-105"
+            style={{ backgroundColor: '#f5f5f5', color: '#666666', border: '1px solid #e0e0e0' }}
+          >
+            <Github className="w-4 h-4 text-white bg-[#444444] rounded-full p-0.5" />
+            Fork this project on GitHub
+          </a>
         </div>
-        </Container>
-      </section>
+        
+        {/* Hero Section */}
+        <div className="flex-1 pt-12 sm:pt-10 md:pt-24 px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto text-center w-full">
+            
+            {/* Hero Text */}
+            <LayoutGroup>
+              <motion.div 
+                className="mb-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <motion.h1 
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light leading-tight tracking-tight"
+                  style={{ color: '#1a1a1a' }}
+                  layout
+                >
+                  <motion.span 
+                    className="block -mb-4"
+                    layout
+                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                  >
+                    Get paid for{" "}
+                  </motion.span>
+                  <TextRotate
+                    texts={products}
+                    mainClassName="text-white font-bold px-4 sm:px-6 md:px-8 py-2 md:py-1 overflow-hidden justify-center rounded-2xl text-rotate-orange"
+                    staggerFrom="last"
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "-120%" }}
+                    staggerDuration={0.03}
+                    splitLevelClassName="overflow-hidden"
+                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                    rotationInterval={2500}
+                  />
+                </motion.h1>
+              </motion.div>
+            </LayoutGroup>
+
+  {/* Subtitle */}
+  <motion.p 
+              className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-6 max-w-2xl mx-auto leading-relaxed px-4"
+              style={{ color: '#666666' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            >
+              List Product. Share Your Link. Get Paid.
+            </motion.p>
+      
+
+ {/* Features Section */}
+ <motion.div 
+          className="py-3 sm:py-4 opacity-75"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 0.75, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-0">
+              
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <Zap className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <h3 className="text-l font-light mb-2" style={{ color: '#3B3B3B' }}>Instant Payments</h3>
+
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <DollarSign className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <h3 className="text-l font-light mb-2" style={{ color: '#3B3B3B' }}>0% Platform Fees</h3>
+
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <Globe className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <h3 className="text-l font-light mb-2" style={{ color: '#3B3B3B' }}>Global Reach</h3>
+
+              </div>
+
+            </div>
+          </div>
+        </motion.div>
+        
+          
+
+            {/* CTA Buttons */}
+            <motion.div
+              className="flex flex-col items-center gap-4 mt-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            >
+              <Button3D 
+                onClick={handleGetStarted} 
+                size="lg" 
+                className="text-white text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 h-auto rounded-2xl font-medium"
+                style={{ 
+                  background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
+                }}
+              >
+                Get Started
+
+              </Button3D>
+              
+              <button
+                onClick={() => setIsVideoModalOpen(true)}
+                className="flex items-center gap-2 text-base sm:text-lg font-light px-6 sm:px-8 py-2 sm:py-3 mt-2 transition-all duration-200 hover:scale-105"
+                style={{ color: '#666666', backgroundColor: 'transparent' }}
+              >
+
+                View Demo
+              </button>
+            </motion.div>
+
+          </div>
+        </div>
+
+       
+
+
+        {/* Minimal Footer */}
+        <motion.div 
+          className="py-6 sm:py-8 md:py-12 text-center text-sm font-light"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+        >
+          <a 
+            href="https://portal.cdp.coinbase.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+          >
+            <span style={{ color: '#999999' }}>Powered by </span>
+            <TextShimmer
+              className="font-bold [--base-color:#999999] [--base-gradient-color:#0052FF]"
+              duration={3}
+              spread={2}
+              as="span"
+            >
+              Coinbase Developer Platform
+            </TextShimmer>
+          </a>
+        </motion.div>
+
       </div>
+      
+      {/* Video Modal */}
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+        videoUrl="https://www.youtube.com/watch?v=nJffRKrZ_mE"
+        title="Product Demo"
+      />
     </CDPProvider>
   )
 }

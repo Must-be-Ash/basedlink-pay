@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation"
 import { useUserSession } from "@/hooks/useUserSession"
 import { OnboardingForm } from "@/components/OnboardingForm"
 import { CDPProvider } from "@/components/CDPProvider"
-import { Container } from "@/components/Container"
-import { Loading } from "@/components/Loading"
+import { PageLoading } from "@/components/Loading"
 import type { User } from "@/types/user"
 
 export default function OnboardingPage() {
@@ -46,11 +45,7 @@ export default function OnboardingPage() {
   if (isLoading) {
     return (
       <CDPProvider>
-        <div className="min-h-screen bg-background">
-          <Container className="py-8">
-            <Loading size="lg" text="Loading..." />
-          </Container>
-        </div>
+        <PageLoading text="Loading..." />
       </CDPProvider>
     )
   }

@@ -4,12 +4,15 @@ import React, { useEffect, useState } from "react"
 import { Header } from "@/components/Header"
 import { Container } from "@/components/Container"
 import { Button } from "@/components/ui/button"
+import { Button3D } from "@/components/ui/button-3d"
 import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { ProductCard } from "@/components/ProductCard"
 import { EmptyState } from "@/components/EmptyState"
-import { Loading } from "@/components/Loading"
+import { Loading, PageLoading } from "@/components/Loading"
 import { useUserSession } from "@/hooks/useUserSession"
-import { Plus, Search, ShoppingBag } from "lucide-react"
+import { Plus, Search, ShoppingBag, Zap, TrendingUp, Activity } from "lucide-react"
 import Link from "next/link"
 import type { Product } from "@/types/product"
 
@@ -87,46 +90,37 @@ export default function ProductsPage() {
     }
   }
 
-  // const handleDeleteProduct = async (productId: string) => {
-  //   if (!confirm('Are you sure you want to delete this product?')) return
-
-  //   try {
-  //     const response = await fetch(`/api/products/${productId}`, {
-  //       method: 'DELETE'
-  //     })
-
-  //     if (response.ok) {
-  //       // Refresh products
-  //       fetchProducts()
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to delete product:', error)
-  //   }
-  // }
-
   if (userLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <Container className="py-8">
-          <Loading size="lg" text="Loading..." />
-        </Container>
-      </div>
+      <PageLoading text="Loading..." />
     )
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
         <Header />
-        <Container className="py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Please Connect Your Wallet</h1>
-            <p className="text-muted-foreground mb-6">
+        <Container className="py-16">
+          <div className="max-w-md mx-auto text-center">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#f8f8f8' }}>
+              <Zap className="w-8 h-8" style={{ color: '#ff5941' }} />
+            </div>
+            <h1 className="text-2xl font-bold mb-4" style={{ color: '#1a1a1a' }}>
+              Connect Your Wallet
+            </h1>
+            <p className="mb-6 leading-relaxed" style={{ color: '#6b7280' }}>
               You need to connect your wallet to manage products.
             </p>
             <Link href="/onboarding">
-              <Button>Connect Wallet</Button>
+              <Button3D
+                size="lg"
+                className="text-white text-base px-8 py-3 h-auto rounded-xl font-medium"
+                style={{ 
+                  background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
+                }}
+              >
+                Connect Wallet
+              </Button3D>
             </Link>
           </div>
         </Container>
@@ -135,104 +129,252 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
       <Header />
       
       <Container className="py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-3xl font-bold">Products</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-3xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
+              Products
+            </h1>
+            <p className="text-lg leading-relaxed" style={{ color: '#6b7280' }}>
               Manage your products and payment links
             </p>
           </div>
           <Link href="/products/new">
-            <Button>
+            <Button3D
+              size="lg"
+              className="text-white text-base px-6 py-3 h-auto rounded-xl font-medium transition-all duration-200 hover:scale-105"
+              style={{ 
+                background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
+              }}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Create Product
-            </Button>
+            </Button3D>
           </Link>
         </div>
 
-        {/* Filters and Search */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          
-          <div className="flex gap-2">
-            <Button
-              variant={statusFilter === "all" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("all")}
-            >
-              All
-            </Button>
-            <Button
-              variant={statusFilter === "active" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("active")}
-            >
-              Active
-            </Button>
-            <Button
-              variant={statusFilter === "inactive" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("inactive")}
-            >
-              Inactive
-            </Button>
-          </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          <Card 
+            className="border-0 transition-all duration-300 hover:shadow-xl"
+            style={{ 
+              backgroundColor: '#DBDBDB',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <ShoppingBag className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <Badge 
+                  variant="outline"
+                  className="px-3 py-1 text-xs font-medium rounded-full"
+                  style={{ 
+                    backgroundColor: '#C4C4C4',
+                    color: '#696969'
+                  }}
+                >
+                  Total
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
+                {products.length}
+              </div>
+              <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                Total Products
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="border-0 transition-all duration-300 hover:shadow-xl"
+            style={{ 
+              backgroundColor: '#DBDBDB',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <TrendingUp className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <Badge 
+                  variant="outline"
+                  className="px-3 py-1 text-xs font-medium rounded-full"
+                  style={{ 
+                    backgroundColor: '#C4C4C4',
+                    color: '#696969'
+                  }}
+                >
+                  Live
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
+                {products.filter(p => p.isActive).length}
+              </div>
+              <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                Active Products
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="border-0 transition-all duration-300 hover:shadow-xl"
+            style={{ 
+              backgroundColor: '#DBDBDB',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <Activity className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <Badge 
+                  variant="outline"
+                  className="px-3 py-1 text-xs font-medium rounded-full"
+                  style={{ 
+                    backgroundColor: '#C4C4C4',
+                    color: '#696969'
+                  }}
+                >
+                  Paused
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
+                {products.filter(p => !p.isActive).length}
+              </div>
+              <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                Inactive Products
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-2xl font-bold">{products.length}</div>
-            <div className="text-sm text-muted-foreground">Total Products</div>
-          </div>
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-2xl font-bold">
-              {products.filter(p => p.isActive).length}
+        {/* Filters and Search */}
+        <Card 
+          className="border-0 mb-8"
+          style={{ 
+            backgroundColor: '#DBDBDB',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+            borderRadius: '16px'
+          }}
+        >
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#6b7280' }} />
+                <Input
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-12 rounded-xl border-0 text-base"
+                  style={{ 
+                    backgroundColor: '#f9fafb',
+                    color: '#1f2937'
+                  }}
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setStatusFilter("all")}
+                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  style={statusFilter === "all" ? { 
+                    background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                    border: 'none',
+                    color: '#ffffff'
+                  } : { 
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#e5e7eb',
+                    color: '#374151'
+                  }}
+                >
+                  All
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setStatusFilter("active")}
+                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  style={statusFilter === "active" ? { 
+                    background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                    border: 'none',
+                    color: '#ffffff'
+                  } : { 
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#e5e7eb',
+                    color: '#374151'
+                  }}
+                >
+                  Active
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setStatusFilter("inactive")}
+                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  style={statusFilter === "inactive" ? { 
+                    background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                    border: 'none',
+                    color: '#ffffff'
+                  } : { 
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#e5e7eb',
+                    color: '#374151'
+                  }}
+                >
+                  Inactive
+                </Button>
+              </div>
             </div>
-            <div className="text-sm text-muted-foreground">Active Products</div>
-          </div>
-          <div className="bg-card rounded-lg border p-4">
-            <div className="text-2xl font-bold">
-              {products.filter(p => !p.isActive).length}
-            </div>
-            <div className="text-sm text-muted-foreground">Inactive Products</div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Products Grid */}
         {isLoading ? (
-          <Loading size="lg" text="Loading products..." />
+          <div className="flex items-center justify-center py-16">
+            <Loading size="lg" text="Loading products..." />
+          </div>
         ) : filteredProducts.length === 0 ? (
-          <EmptyState
-            icon={ShoppingBag}
-            title={products.length === 0 ? "No products yet" : "No products found"}
-            description={
-              products.length === 0 
-                ? "Create your first product to start accepting crypto payments"
-                : "Try adjusting your search or filter criteria"
-            }
-            action={
-              products.length === 0 
-                ? {
-                    label: "Create Product",
-                    onClick: () => window.location.href = "/products/new"
-                  }
-                : undefined
-            }
-          />
+          <Card 
+            className="border-0"
+            style={{ 
+              backgroundColor: '#ffffff',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="py-16">
+              <EmptyState
+                icon={ShoppingBag}
+                title={products.length === 0 ? "No products yet" : "No products found"}
+                description={
+                  products.length === 0 
+                    ? "Create your first product to start accepting crypto payments"
+                    : "Try adjusting your search or filter criteria"
+                }
+                action={
+                  products.length === 0 
+                    ? {
+                        label: "Create Product",
+                        onClick: () => window.location.href = "/products/new"
+                      }
+                    : undefined
+                }
+              />
+            </CardContent>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProducts.map((product) => (

@@ -213,8 +213,8 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
           </div>
         </form>
         
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Powered by Coinbase • No wallet needed
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          Powered by <strong>Coinbase Developer Platform</strong>
         </p>
       </div>
     )
@@ -324,8 +324,8 @@ export function WalletAuth({ onAuthSuccess, className }: WalletAuthProps) {
         </button>
       </form>
       
-      <p className="text-center text-sm text-muted-foreground mt-6">
-        Powered by Coinbase • No wallet needed
+      <p className="text-center text-xs text-muted-foreground mt-6">
+        Powered by <strong>Coinbase Developer Platform</strong>
       </p>
     </div>
   )

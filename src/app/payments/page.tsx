@@ -5,11 +5,13 @@ import { useSearchParams } from "next/navigation"
 import { Header } from "@/components/Header"
 import { Container } from "@/components/Container"
 import { Button } from "@/components/ui/button"
+import { Button3D } from "@/components/ui/button-3d"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { PaymentStatus } from "@/components/PaymentStatus"
 import { EmptyState } from "@/components/EmptyState"
-import { Loading } from "@/components/Loading"
+import { Loading, PageLoading } from "@/components/Loading"
 import { useUserSession } from "@/hooks/useUserSession"
 import { formatCurrency } from "@/lib/utils"
 import { 
@@ -17,7 +19,9 @@ import {
   Download, 
   DollarSign,
   ArrowLeft,
-  Calendar
+  Zap,
+  CheckCircle,
+  Clock
 } from "lucide-react"
 import Link from "next/link"
 import type { PaymentWithProduct } from "@/types/payment"
@@ -93,27 +97,35 @@ export default function PaymentsPage() {
 
   if (userLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <Container className="py-8">
-          <Loading size="lg" text="Loading..." />
-        </Container>
-      </div>
+      <PageLoading text="Loading..." />
     )
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
         <Header />
-        <Container className="py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Please Connect Your Wallet</h1>
-            <p className="text-muted-foreground mb-6">
+        <Container className="py-16">
+          <div className="max-w-md mx-auto text-center">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#f8f8f8' }}>
+              <Zap className="w-8 h-8" style={{ color: '#ff5941' }} />
+            </div>
+            <h1 className="text-2xl font-bold mb-4" style={{ color: '#1a1a1a' }}>
+              Connect Your Wallet
+            </h1>
+            <p className="mb-6 leading-relaxed" style={{ color: '#6b7280' }}>
               You need to connect your wallet to view payments.
             </p>
             <Link href="/onboarding">
-              <Button>Connect Wallet</Button>
+              <Button3D
+                size="lg"
+                className="text-white text-base px-8 py-3 h-auto rounded-xl font-medium"
+                style={{ 
+                  background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
+                }}
+              >
+                Connect Wallet
+              </Button3D>
             </Link>
           </div>
         </Container>
@@ -122,139 +134,292 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
       <Header />
       
       <Container className="py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-12">
           <div>
             {productId ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <Link href="/products">
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                    style={{ 
+                      backgroundColor: '#f8f9fa',
+                      borderColor: '#e5e7eb',
+                      color: '#374151'
+                    }}
+                  >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back to Products
                   </Button>
                 </Link>
                 <div>
-                  <h1 className="text-3xl font-bold">Product Payments</h1>
-                  <p className="text-muted-foreground">
+                  <h1 className="text-3xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
+                    Product Payments
+                  </h1>
+                  <p className="text-lg leading-relaxed" style={{ color: '#6b7280' }}>
                     Payment history for this product
                   </p>
                 </div>
               </div>
             ) : (
               <div>
-                <h1 className="text-3xl font-bold">Payments</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-3xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
+                  Payments
+                </h1>
+                <p className="text-lg leading-relaxed" style={{ color: '#6b7280' }}>
                   Track all your payment transactions
                 </p>
               </div>
             )}
           </div>
           
-          <Button variant="outline">
+          <Button 
+            variant="outline"
+            className="h-12 px-6 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+            style={{ 
+              backgroundColor: '#f8f9fa',
+              borderColor: '#e5e7eb',
+              color: '#374151'
+            }}
+          >
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(totalEarnings)}</div>
-              <p className="text-xs text-muted-foreground">
-                From {completedPayments} completed payments
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          <Card 
+            className="border-0 transition-all duration-300 hover:shadow-xl"
+            style={{ 
+              backgroundColor: '#ffffff',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <DollarSign className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <Badge 
+                  variant="outline"
+                  className="px-3 py-1 text-xs font-medium rounded-full"
+                  style={{ 
+                    backgroundColor: '#C4C4C4',
+                    color: '#696969'
+                  }}
+                >
+                  {completedPayments} payments
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
+                {formatCurrency(totalEarnings)}
+              </div>
+              <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                Total Earnings
               </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{completedPayments}</div>
-              <p className="text-xs text-muted-foreground">Successful payments</p>
+          <Card 
+            className="border-0 transition-all duration-300 hover:shadow-xl"
+            style={{ 
+              backgroundColor: '#ffffff',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <CheckCircle className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <Badge 
+                  variant="outline"
+                  className="px-3 py-1 text-xs font-medium rounded-full"
+                  style={{ 
+                    backgroundColor: '#C4C4C4',
+                    color: '#696969'
+                  }}
+                >
+                  Completed
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
+                {completedPayments}
+              </div>
+              <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                Successful Payments
+              </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{pendingPayments}</div>
-              <p className="text-xs text-muted-foreground">Awaiting confirmation</p>
+          <Card 
+            className="border-0 transition-all duration-300 hover:shadow-xl"
+            style={{ 
+              backgroundColor: '#ffffff',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                  <Clock className="w-6 h-6" style={{ color: '#ff5941' }} />
+                </div>
+                <Badge 
+                  variant="outline"
+                  className="px-3 py-1 text-xs font-medium rounded-full"
+                  style={{ 
+                    backgroundColor: '#C4C4C4',
+                    color: '#696969'
+                  }}
+                >
+                  Pending
+                </Badge>
+              </div>
+              <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
+                {pendingPayments}
+              </div>
+              <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                Awaiting Confirmation
+              </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Search by email, transaction hash, or product..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          
-          <div className="flex gap-2">
-            <Button
-              variant={statusFilter === "all" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("all")}
-            >
-              All
-            </Button>
-            <Button
-              variant={statusFilter === "completed" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("completed")}
-            >
-              Completed
-            </Button>
-            <Button
-              variant={statusFilter === "pending" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("pending")}
-            >
-              Pending
-            </Button>
-            <Button
-              variant={statusFilter === "failed" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("failed")}
-            >
-              Failed
-            </Button>
-          </div>
-        </div>
+        <Card 
+          className="border-0 mb-8"
+          style={{ 
+            backgroundColor: '#ffffff',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+            borderRadius: '16px'
+          }}
+        >
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#6b7280' }} />
+                <Input
+                  placeholder="Search by email, transaction hash, or product..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-12 rounded-xl border-0 text-base"
+                  style={{ 
+                    backgroundColor: '#f9fafb',
+                    color: '#1f2937'
+                  }}
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setStatusFilter("all")}
+                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  style={statusFilter === "all" ? { 
+                    background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                    border: 'none',
+                    color: '#ffffff'
+                  } : { 
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#e5e7eb',
+                    color: '#374151'
+                  }}
+                >
+                  All
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setStatusFilter("completed")}
+                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  style={statusFilter === "completed" ? { 
+                    background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                    border: 'none',
+                    color: '#ffffff'
+                  } : { 
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#e5e7eb',
+                    color: '#374151'
+                  }}
+                >
+                  Completed
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setStatusFilter("pending")}
+                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  style={statusFilter === "pending" ? { 
+                    background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                    border: 'none',
+                    color: '#ffffff'
+                  } : { 
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#e5e7eb',
+                    color: '#374151'
+                  }}
+                >
+                  Pending
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setStatusFilter("failed")}
+                  className="h-12 px-4 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                  style={statusFilter === "failed" ? { 
+                    background: 'linear-gradient(to bottom, #ff6d41, #ff5420)',
+                    border: 'none',
+                    color: '#ffffff'
+                  } : { 
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#e5e7eb',
+                    color: '#374151'
+                  }}
+                >
+                  Failed
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Payments List */}
         {isLoading ? (
-          <Loading size="lg" text="Loading payments..." />
+          <div className="flex items-center justify-center py-16">
+            <Loading size="lg" text="Loading payments..." />
+          </div>
         ) : filteredPayments.length === 0 ? (
-          <EmptyState
-            icon={DollarSign}
-            title={payments.length === 0 ? "No payments yet" : "No payments found"}
-            description={
-              payments.length === 0 
-                ? "Your payment transactions will appear here once customers start purchasing your products"
-                : "Try adjusting your search or filter criteria"
-            }
-          />
+          <Card 
+            className="border-0"
+            style={{ 
+              backgroundColor: '#ffffff',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+              borderRadius: '16px'
+            }}
+          >
+            <CardContent className="py-16">
+              <EmptyState
+                icon={DollarSign}
+                title={payments.length === 0 ? "No payments yet" : "No payments found"}
+                description={
+                  payments.length === 0 
+                    ? "Your payment transactions will appear here once customers start purchasing your products"
+                    : "Try adjusting your search or filter criteria"
+                }
+              />
+            </CardContent>
+          </Card>
         ) : (
           <div className="space-y-4">
             {filteredPayments.map((payment) => (

@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-background: #ffffff;
+  --color-background: #F2F2F2;
   --color-foreground: #171717;
   --color-primary: #3b82f6;
   --color-primary-foreground: #ffffff;
@@ -116,7 +116,7 @@ body {
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: oklch(0.96, 0.00, NaN);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
@@ -186,6 +186,9 @@ body {
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  html {
+    background-color: #F2F2F2;
   }
   body {
     @apply bg-background text-foreground;

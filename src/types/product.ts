@@ -41,6 +41,7 @@ export interface ProductWithSeller extends Product {
     name: string
     email: string
     walletAddress?: string
+    profileImageUrl?: string
   }
 }
 

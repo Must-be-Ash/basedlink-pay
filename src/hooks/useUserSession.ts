@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useCurrentUser, useEvmAddress, useIsInitialized } from "@coinbase/cdp-hooks"
 import type { User } from "@/types/user"
 import type { CDPUser } from "@/types/cdp"
@@ -17,12 +17,12 @@ export function useUserSession() {
   const [needsEmailInput, setNeedsEmailInput] = useState(false)
 
   // Store the email from authentication
-  const setAuthenticatedEmail = (email: string) => {
+  const setAuthenticatedEmail = useCallback((email: string) => {
     setAuthEmail(email)
     setNeedsEmailInput(false) // Reset the flag when email is provided
     // Also store in localStorage for persistence across page reloads
     localStorage.setItem('cdp_auth_email', email)
-  }
+  }, [])
 
   // Load stored email on mount
   useEffect(() => {
@@ -88,7 +88,7 @@ export function useUserSession() {
               setIsLoading(false)
               return
             }
-          } catch (error) {
+          } catch {
             console.log('No existing user found by wallet address')
           }
           
@@ -134,7 +134,7 @@ export function useUserSession() {
     }
 
     syncUserToDatabase()
-  }, [isInitialized, currentUser, evmAddress, authEmail])
+  }, [isInitialized, currentUser, evmAddress, authEmail, setAuthenticatedEmail])
 
   const updateUser = async (updates: { name?: string; bio?: string; profileImageUrl?: string }) => {
     if (!dbUser?._id) return null

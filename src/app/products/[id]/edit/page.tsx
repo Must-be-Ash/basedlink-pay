@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { Header } from "@/components/Header"
 import { Container } from "@/components/Container"
 import { ProductForm } from "@/components/ProductForm"
-import { Loading } from "@/components/Loading"
+import { PageLoading } from "@/components/Loading"
 import { DeleteProductModal } from "@/components/DeleteProductModal"
 import { useUserSession } from "@/hooks/useUserSession"
 import { Button } from "@/components/ui/button"
@@ -166,12 +166,7 @@ export default function EditProductPage() {
   // Show loading if user session is still loading
   if (userLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <Container className="py-8">
-          <Loading size="lg" text="Loading..." />
-        </Container>
-      </div>
+      <PageLoading text="Loading..." />
     )
   }
 

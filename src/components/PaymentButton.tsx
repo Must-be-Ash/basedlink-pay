@@ -2,14 +2,13 @@
 
 import React, { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
+import { Button3D } from "@/components/ui/button-3d"
 // import { Badge } from "@/components/ui/badge"
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   Loader2, 
-  CreditCard, 
   Wallet, 
   CheckCircle2, 
-  AlertCircle,
   Plus
 } from "lucide-react"
 import { toast } from "sonner"
@@ -152,83 +151,62 @@ export function PaymentButton({
   // Insufficient balance state - show funding options
   if (paymentStatus === 'insufficient_balance') {
     return (
-      <div className={`space-y-6 ${className}`}>
-        <div className="text-center pb-4">
-          <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#fef3c7' }}>
-            <AlertCircle className="w-6 h-6" style={{ color: '#d97706' }} />
+      <div className={`space-y-4 ${className}`}>
+        {/* Show balance info in existing format */}
+        <div className="space-y-4">
+          <div className="flex justify-between text-sm">
+            <span style={{ color: '#6b7280' }}>Amount:</span>
+            <span className="font-medium" style={{ color: '#1f2937' }}>{product.priceUSDC} USDC</span>
           </div>
-          <h3 className="text-lg font-semibold mb-2" style={{ color: '#92400e' }}>Insufficient USDC Balance</h3>
-          <p className="text-sm leading-relaxed" style={{ color: '#b45309' }}>
-            You need <span className="font-semibold">{product.priceUSDC} USDC</span> but only have <span className="font-semibold">{formattedBalance} USDC</span>
-          </p>
+          <div className="flex justify-between text-sm">
+            <span style={{ color: '#6b7280' }}>Your balance:</span>
+            <span className="font-medium" style={{ color: '#dc2626' }}>
+              {checkingBalance ? (
+                <Loader2 className="w-4 h-4 animate-spin inline" />
+              ) : (
+                `${formattedBalance} USDC`
+              )}
+            </span>
+          </div>
+          
+          {/* Minimal insufficient funds notice */}
+          <div className="pt-2 pb-1" style={{ borderTop: '1px solid #fee2e2' }}>
+            <p className="text-xs text-center" style={{ color: '#dc2626' }}>
+              Insufficient balance • Need {(product.priceUSDC - parseFloat(formattedBalance)).toFixed(2)} more USDC
+            </p>
+          </div>
         </div>
 
-        <div className="text-center">
-          <p className="text-sm mb-6 leading-relaxed" style={{ color: '#6b7280' }}>
-            Add USDC to your wallet to complete the payment:
-          </p>
-        </div>
-
-        {/* Single funding button */}
-        <Button
+        {/* Primary action button */}
+        <Button3D
           onClick={handleFundWallet}
           disabled={isCreatingSession}
-          className="w-full py-3 text-base font-medium"
+          variant="default"
           size="lg"
-          style={{ 
-            backgroundColor: '#1f2937', 
-            color: '#ffffff',
-            border: 'none'
-          }}
+          className="w-full"
+          isLoading={isCreatingSession}
         >
           {isCreatingSession ? (
             <>
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Opening Coinbase Pay...
             </>
           ) : (
             <>
-              <Plus className="w-5 h-5 mr-2" />
-              Add USDC with Coinbase
+              <Plus className="w-4 h-4 mr-2" />
+              Add USDC
             </>
           )}
-        </Button>
+        </Button3D>
 
-        {/* Action buttons - Stack vertically to prevent overflow */}
-        <div className="space-y-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={resetPayment}
-            className="w-full py-2"
-            style={{ 
-              backgroundColor: '#f9fafb',
-              color: '#6b7280',
-              border: '1px solid #e5e7eb'
-            }}
-          >
-            Back to Payment
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={recheckBalance}
-            className="w-full py-2"
-            style={{ 
-              backgroundColor: '#f9fafb',
-              color: '#6b7280',
-              border: '1px solid #e5e7eb'
-            }}
-          >
-            Refresh Balance
-          </Button>
-        </div>
-
-        <div className="text-center pt-4" style={{ borderTop: '1px solid #e5e7eb' }}>
-          <p className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
-            💳 Buy with card or bank • 👤 Guest checkout available • 🔒 Secure on Base network
-          </p>
-        </div>
+        {/* Minimal secondary action */}
+        <button
+          onClick={resetPayment}
+          className="w-full text-sm py-2 hover:underline"
+          style={{ color: '#6b7280' }}
+        >
+          Back to Payment
+        </button>
       </div>
     )
   }
@@ -257,10 +235,6 @@ export function PaymentButton({
           <span className="font-medium" style={{ color: '#1f2937' }}>{product.priceUSDC} USDC</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span style={{ color: '#6b7280' }}>Network:</span>
-          <span className="font-medium" style={{ color: '#1f2937' }}>Base</span>
-        </div>
-        <div className="flex justify-between text-sm">
           <span style={{ color: '#6b7280' }}>Your balance:</span>
           <span className="font-medium" style={{ color: '#1f2937' }}>
             {checkingBalance ? (
@@ -272,15 +246,15 @@ export function PaymentButton({
         </div>
       </div>
       
-      <Button
+      <Button3D
         onClick={handlePayment}
         disabled={disabled || isLoading || paymentStatus === 'processing' || checkingBalance}
-        className="w-full py-3 text-base font-medium"
+        variant="default"
         size="lg"
+        className="w-full"
+        isLoading={paymentStatus === 'processing'}
         style={{ 
-          backgroundColor: '#1f2937', 
-          color: '#ffffff',
-          border: 'none'
+          background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
         }}
       >
         {paymentStatus === 'processing' ? (
@@ -290,11 +264,11 @@ export function PaymentButton({
           </>
         ) : (
           <>
-            <CreditCard className="w-4 h-4 mr-2" />
+           
             Pay {product.priceUSDC} USDC
           </>
         )}
-      </Button>
+      </Button3D>
     </div>
   )
 }

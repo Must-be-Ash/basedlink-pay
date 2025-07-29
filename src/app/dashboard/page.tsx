@@ -4,11 +4,13 @@ import React, { useEffect, useState } from "react"
 import { Header } from "@/components/Header"
 import { Container } from "@/components/Container"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button3D } from "@/components/ui/button-3d"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ProductCard } from "@/components/ProductCard"
 import { EmptyState } from "@/components/EmptyState"
-import { Loading } from "@/components/Loading"
+import { PageLoading } from "@/components/Loading"
+// import { TextShimmer } from "@/components/ui/text-shimmer"
 import { useUserSession } from "@/hooks/useUserSession"
 import { formatCurrency } from "@/lib/utils"
 import { 
@@ -17,7 +19,9 @@ import {
   ShoppingBag, 
   TrendingUp, 
   Eye,
-  ExternalLink
+  ExternalLink,
+  Zap,
+  Globe
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -113,29 +117,37 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated, user, fetchData, needsOnboarding])
 
-  if (userLoading) {
+  if (userLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <Container className="py-8">
-          <Loading size="lg" text="Loading dashboard..." />
-        </Container>
-      </div>
+      <PageLoading text="Loading dashboard..." />
     )
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
         <Header />
-        <Container className="py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Please Connect Your Wallet</h1>
-            <p className="text-muted-foreground mb-6">
+        <Container className="py-16">
+          <div className="max-w-md mx-auto text-center">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#f8f8f8' }}>
+              <Zap className="w-8 h-8" style={{ color: '#ff5941' }} />
+            </div>
+            <h1 className="text-2xl font-bold mb-4" style={{ color: '#1a1a1a' }}>
+              Connect Your Wallet
+            </h1>
+            <p className="mb-6 leading-relaxed" style={{ color: '#6b7280' }}>
               You need to connect your wallet to access the dashboard.
             </p>
             <Link href="/onboarding">
-              <Button>Connect Wallet</Button>
+              <Button3D
+                size="lg"
+                className="text-white text-base px-8 py-3 h-auto rounded-xl font-medium"
+                style={{ 
+                  background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
+                }}
+              >
+                Connect Wallet
+              </Button3D>
             </Link>
           </div>
         </Container>
@@ -148,110 +160,197 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
       <Header />
       
       <Container className="py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
+        <div className="mb-12">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Welcome back, {user?.name}</h1>
-              <p className="text-muted-foreground">
+                              <h1 className="text-3xl font-bold mb-2" style={{ color: '#1a1a1a' }}>
+                  Welcome back, {user?.name || 'User'}
+                </h1>
+              <p className="text-lg leading-relaxed" style={{ color: '#6b7280' }}>
                 Here&apos;s what&apos;s happening with your crypto payments
               </p>
             </div>
             <Link href="/products/new">
-              <Button>
+              <Button3D
+                size="lg"
+                className="text-white text-base px-6 py-3 h-auto rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                style={{ 
+                  background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
+                }}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Product
-              </Button>
+              </Button3D>
             </Link>
           </div>
         </div>
 
-        {isLoading ? (
-          <Loading size="lg" text="Loading analytics..." />
-        ) : (
-          <>
+        <>
             {/* Analytics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              <Card 
+                className="border-0 transition-all duration-300 hover:shadow-xl"
+                style={{ 
+                  backgroundColor: '#DBDBDB',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                  borderRadius: '16px'
+                }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                      <DollarSign className="w-6 h-6" style={{ color: '#ff5941' }} />
+                    </div>
+                    <Badge 
+                      variant="outline"
+                      className="px-3 py-1 text-xs font-medium rounded-full"
+                      style={{ 
+                        backgroundColor: '#C4C4C4',
+                        color: '#696969'
+                      }}
+                    >
+                      {analytics?.totalSales || 0} sales
+                    </Badge>
+                  </div>
+                  <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
                     {formatCurrency(analytics?.totalEarnings || 0)}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    From {analytics?.totalSales || 0} sales
+                  <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                    Total Earnings
                   </p>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Products</CardTitle>
-                  <ShoppingBag className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{analytics?.totalProducts || 0}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {analytics?.activeProducts || 0} active
+              <Card 
+                className="border-0 transition-all duration-300 hover:shadow-xl"
+                style={{ 
+                  backgroundColor: '#DBDBDB',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                  borderRadius: '16px'
+                }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                      <ShoppingBag className="w-6 h-6" style={{ color: '#ff5941' }} />
+                    </div>
+                    <Badge 
+                      variant="outline"
+                      className="px-3 py-1 text-xs font-medium rounded-full"
+                      style={{ 
+                       backgroundColor: '#C4C4C4',
+                       color: '#696969'
+                      }}
+                    >
+                      {analytics?.activeProducts || 0} active
+                    </Badge>
+                  </div>
+                  <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
+                    {analytics?.totalProducts || 0}
+                  </div>
+                  <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                    Total Products
                   </p>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Average Order</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+              <Card 
+                className="border-0 transition-all duration-300 hover:shadow-xl"
+                style={{ 
+                  backgroundColor: '#DBDBDB',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                  borderRadius: '16px'
+                }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                      <TrendingUp className="w-6 h-6" style={{ color: '#ff5941' }} />
+                    </div>
+                    <Badge 
+                      variant="outline"
+                      className="px-3 py-1 text-xs font-medium rounded-full"
+                      style={{ 
+                        backgroundColor: '#C4C4C4',
+                        color: '#696969'
+                      }}
+                    >
+                      Per transaction
+                    </Badge>
+                  </div>
+                  <div className="text-2xl font-bold mb-1" style={{ color: '#1f2937' }}>
                     {formatCurrency(analytics?.averageOrderValue || 0)}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Per transaction
+                  <p className="text-sm font-medium" style={{ color: '#6b7280' }}>
+                    Average Order Value
                   </p>
                 </CardContent>
               </Card>
-
-             
             </div>
 
             {/* Products Section */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Your Products</h2>
-                <div className="flex gap-2">
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-bold" style={{ color: '#1a1a1a' }}>
+                  Your Products
+                </h2>
+                <div className="flex gap-3">
                   <Link href="/products">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                      style={{ 
+                        backgroundColor: '#f8f9fa',
+                        borderColor: '#e5e7eb',
+                        color: '#374151'
+                      }}
+                    >
                       <Eye className="w-4 h-4 mr-2" />
                       View All
                     </Button>
                   </Link>
                   <Link href="/products/new">
-                    <Button size="sm">
+                    <Button3D
+                      size="default"
+                      className="text-white text-sm px-4 py-2 h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                      style={{ 
+                        background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
+                      }}
+                    >
                       <Plus className="w-4 h-4 mr-2" />
                       Add Product
-                    </Button>
+                    </Button3D>
                   </Link>
                 </div>
               </div>
 
               {products.length === 0 ? (
-                <EmptyState
-                  icon={ShoppingBag}
-                  title="No products yet"
-                  description="Create your first product to start accepting crypto payments"
-                  action={{
-                    label: "Create Product",
-                    onClick: () => window.location.href = "/products/new"
+                <Card 
+                  className="border-0"
+                  style={{ 
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                    borderRadius: '16px'
                   }}
-                />
+                >
+                  <CardContent className="py-16">
+                    <EmptyState
+                      icon={ShoppingBag}
+                      title="No products yet"
+                      description="Create your first product to start accepting crypto payments"
+                      action={{
+                        label: "Create Product",
+                        onClick: () => window.location.href = "/products/new"
+                      }}
+                    />
+                  </CardContent>
+                </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {products.slice(0, 6).map((product) => {
@@ -277,10 +376,21 @@ export default function DashboardPage() {
 
             {/* Recent Activity */}
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Recent Activity</h2>
+              <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold" style={{ color: '#1a1a1a' }}>
+              Recent Activity
+                </h2>
                 <Link href="/payments">
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="h-10 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+                    style={{ 
+                      backgroundColor: '#f8f9fa',
+                      borderColor: '#e5e7eb',
+                      color: '#374151'
+                    }}
+                  >
                     <ExternalLink className="w-4 h-4 mr-2" />
                     View All Payments
                   </Button>
@@ -288,8 +398,15 @@ export default function DashboardPage() {
               </div>
 
               {analytics?.recentPayments?.length === 0 ? (
-                <Card>
-                  <CardContent className="py-8">
+                <Card 
+                  className="border-0"
+                  style={{ 
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                    borderRadius: '16px'
+                  }}
+                >
+                  <CardContent className="py-16">
                     <EmptyState
                       title="No payments yet"
                       description="Your recent payment activity will appear here"
@@ -297,24 +414,50 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Payments</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                <Card 
+                  className="border-0"
+                  style={{ 
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                    borderRadius: '16px'
+                  }}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-6">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style={{ backgroundColor: '#f8f8f8' }}>
+                        <Globe className="w-5 h-5" style={{ color: '#ff5941' }} />
+                      </div>
+                      <h3 className="text-lg font-semibold" style={{ color: '#1f2937' }}>Recent Payments</h3>
+                    </div>
                     <div className="space-y-4">
                       {analytics?.recentPayments?.slice(0, 5).map((payment, index) => (
-                        <div key={index} className="flex items-center justify-between py-2">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        <div 
+                          key={index} 
+                          className="flex items-center justify-between py-3 px-4 rounded-xl transition-all duration-200 hover:shadow-sm"
+                          style={{ backgroundColor: '#f9fafb' }}
+                        >
+                          <div className="flex items-center space-x-4">
+                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#16a34a' }} />
                             <div>
-                              <p className="font-medium">{formatCurrency(payment.amountUSD)}</p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="font-semibold" style={{ color: '#1f2937' }}>
+                                {formatCurrency(payment.amountUSD)}
+                              </p>
+                              <p className="text-sm" style={{ color: '#6b7280' }}>
                                 {new Date(payment.createdAt).toLocaleDateString()}
                               </p>
                             </div>
                           </div>
-                          <Badge variant="success">Completed</Badge>
+                          <Badge 
+                            variant="outline"
+                            className="px-3 py-1 text-xs font-medium rounded-full"
+                            style={{ 
+                              backgroundColor: '#dcfce7',
+                              borderColor: '#16a34a',
+                              color: '#16a34a'
+                            }}
+                          >
+                            Completed
+                          </Badge>
                         </div>
                       ))}
                     </div>
@@ -323,7 +466,6 @@ export default function DashboardPage() {
               )}
             </div>
           </>
-        )}
       </Container>
     </div>
   )
