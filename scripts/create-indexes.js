@@ -33,9 +33,19 @@ async function createIndexes() {
     
     // Payments collection indexes
     const paymentsCollection = db.collection('payments')
+    
+    // Drop existing transactionHash index if it exists (to fix duplicate null issue)
+    try {
+      await paymentsCollection.dropIndex('transactionHash_1')
+      console.log('Dropped existing transactionHash index')
+    } catch (error) {
+      // Index might not exist, continue
+      console.log('transactionHash index does not exist or already dropped')
+    }
+    
     await paymentsCollection.createIndex({ sellerId: 1, createdAt: -1 })
     await paymentsCollection.createIndex({ productId: 1, createdAt: -1 })
-    await paymentsCollection.createIndex({ transactionHash: 1 }, { unique: true })
+    await paymentsCollection.createIndex({ transactionHash: 1 }, { unique: true, sparse: true })
     await paymentsCollection.createIndex({ buyerEmail: 1 })
     await paymentsCollection.createIndex({ status: 1 })
     await paymentsCollection.createIndex({ createdAt: -1 })
