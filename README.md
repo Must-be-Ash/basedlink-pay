@@ -143,11 +143,15 @@ npm install
 # Copy example environment file
 cp .env.example .env.local
 
-# Add your CDP credentials
-NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id
-BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/stablelink
+# Fill in your actual values in .env.local
 ```
+
+**Required Environment Variables:**
+- **CDP Project ID**: Get from [CDP Portal Projects](https://portal.cdp.coinbase.com/projects)
+- **CDP API Credentials**: Get from [CDP API Access](https://portal.cdp.coinbase.com/access/api)
+- **MongoDB URI**: Create free cluster at [MongoDB Atlas](https://cloud.mongodb.com/)
+- **Vercel Blob Token**: Get from [Vercel Dashboard](https://vercel.com/dashboard/stores)
+- **Alchemy API Key**: Get from [Alchemy Dashboard](https://dashboard.alchemy.com/)
 
 ### 4. **Configure Your Domain**
 🌐 **[Add Your Domain](https://portal.cdp.coinbase.com/products/embedded-wallets)** to Embedded Wallets allowlist
@@ -217,20 +221,46 @@ npm run dev
 ## 🔧 Configuration
 
 ### **Environment Variables**
+
+**🔑 Get Your CDP API Keys First!**
+Before setting up the project, you'll need CDP API credentials. **[Sign up at CDP Portal](https://portal.cdp.coinbase.com/)** to get your free API keys.
+
 ```bash
-# Required - CDP Configuration
-NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id
-ALCHEMY_API_KEY=your_alchemy_api_key
+# ==============================================================================
+# REQUIRED - CDP (Coinbase Developer Platform) Configuration
+# ==============================================================================
+# Get your CDP Project ID from: https://portal.cdp.coinbase.com/projects
+NEXT_PUBLIC_CDP_PROJECT_ID=your_cdp_project_id_here
 
-# Required - Database  
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/db
+# Get your CDP API credentials from: https://portal.cdp.coinbase.com/access/api
+# These are REQUIRED for onramp functionality (buying USDC)
+CDP_API_KEY_NAME=your_cdp_api_key_name_here
+CDP_PRIVATE_KEY=your_cdp_private_key_here
 
-# Required - File Storage
-BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
+# ==============================================================================
+# REQUIRED - Database & Storage
+# ==============================================================================
+# MongoDB connection string - create a free cluster at: https://cloud.mongodb.com/
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database_name
 
-# Optional - Analytics & Monitoring
-NEXT_PUBLIC_BASE_URL=https://www.stablelink.xyz
+# Vercel Blob storage token for image uploads - get from: https://vercel.com/dashboard/stores
+BLOB_READ_WRITE_TOKEN=your_vercel_blob_token_here
+
+# Alchemy API key for blockchain verification - get from: https://dashboard.alchemy.com/
+ALCHEMY_API_KEY=your_alchemy_api_key_here
+
+# ==============================================================================
+# OPTIONAL - Application Configuration
+# ==============================================================================
+# Base URL for your application (update for production)
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# API key for internal server-to-server requests (generate a random string)
+API_KEY=your_random_api_key_here
 ```
+
+**📄 Complete Configuration:**
+Copy `.env.example` to `.env.local` and fill in your actual values. The example file includes all required and optional environment variables with documentation.
 
 ### **Database Setup**
 ```bash
