@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <CDPProvider>
           {children}
-          <Toaster position="top-right" />
+          <Toaster position="bottom-right" />
         </CDPProvider>
       </body>
     </html>

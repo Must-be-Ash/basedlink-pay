@@ -155,7 +155,7 @@ All API routes follow this structure:
 ### Next.js Configuration
 - MongoDB externalized to prevent client-side bundling
 - Security headers configured for API routes
-- Image domains whitelisted: `localhost`, `basedlink.xyz`
+- Image domains whitelisted: `localhost`, `stablelink.xyz`
 - Webpack fallbacks for Node.js modules
 
 ### CDP Security

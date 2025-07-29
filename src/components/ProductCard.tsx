@@ -41,14 +41,14 @@ export function ProductCard({
 
   return (
     <Card 
-      className={`${className} transition-all duration-300 hover:shadow-xl border-0 overflow-hidden group`}
+      className={`${className} transition-all duration-300 hover:shadow-xl border-0 overflow-hidden group h-full`}
       style={{ 
         backgroundColor: '#ffffff',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
         borderRadius: '16px'
       }}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-6 h-full flex flex-col">
         {/* Header Section */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
@@ -69,11 +69,17 @@ export function ProductCard({
             )}
             
             {/* Product Description */}
-            {product.description && (
-              <p className="text-sm leading-relaxed line-clamp-2" style={{ color: '#6b7280' }}>
-                {product.description}
-              </p>
-            )}
+            <div className="h-10 mb-2">
+              {product.description ? (
+                <p className="text-sm leading-relaxed line-clamp-2" style={{ color: '#6b7280' }}>
+                  {product.description}
+                </p>
+              ) : (
+                <p className="text-sm leading-relaxed" style={{ color: '#94a3b8' }}>
+                  No description
+                </p>
+              )}
+            </div>
           </div>
           
           {/* Status Badge */}
@@ -139,6 +145,9 @@ export function ProductCard({
             </span>
           </div>
         </div>
+
+        {/* Flexible spacer to push buttons to bottom */}
+        <div className="flex-grow"></div>
 
         {/* Action Buttons */}
         <div className="space-y-3">

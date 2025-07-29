@@ -146,7 +146,7 @@ export function Header({ className }: HeaderProps) {
                 color: '#ffffff'
               }}
             >
-              BasedLink
+              StableLink
             </span>
           </motion.div>
 

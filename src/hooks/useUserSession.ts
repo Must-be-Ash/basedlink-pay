@@ -139,17 +139,26 @@ export function useUserSession() {
   const updateUser = async (updates: { name?: string; bio?: string; profileImageUrl?: string }) => {
     if (!dbUser?._id) return null
 
+    // Get current email and wallet address for authentication
+    const currentEmail = authEmail || (currentUser as CDPUser)?.email
+    if (!currentEmail || !evmAddress) {
+      throw new Error('Authentication required')
+    }
+
     try {
       const response = await fetch(`/api/users/${dbUser._id.toString()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'x-user-email': currentEmail,
+          'x-wallet-address': evmAddress,
         },
         body: JSON.stringify(updates),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to update user')
+        const errorData = await response.json().catch(() => ({ error: 'Update failed' }))
+        throw new Error(errorData.error || 'Failed to update user')
       }
 
       const { data: updatedUser } = await response.json()
@@ -170,6 +179,9 @@ export function useUserSession() {
     }
   }
 
+  // Get current authentication credentials
+  const currentEmail = authEmail || (currentUser as CDPUser)?.email
+
   return {
     user: dbUser,
     cdpUser: currentUser,
@@ -184,5 +196,12 @@ export function useUserSession() {
     refreshUser,
     setUser: setDbUser,
     setAuthenticatedEmail, // Expose method to set email from auth flow
+    // Authentication credentials for secure API calls
+    authCredentials: {
+      email: currentEmail,
+      walletAddress: evmAddress,
+    },
+    // Helper to check if user has valid auth credentials
+    hasAuthCredentials: !!(currentEmail && evmAddress),
   }
 }

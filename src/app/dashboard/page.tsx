@@ -72,10 +72,23 @@ export default function DashboardPage() {
   }, [user])
 
   const handleToggleStatus = async (productId: string, currentStatus: boolean) => {
+    // Get authentication credentials
+    const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+    const walletAddress = user?.walletAddress
+    
+    if (!currentEmail || !walletAddress) {
+      console.error('Authentication required')
+      return
+    }
+
     try {
       const response = await fetch(`/api/products/${productId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-email': currentEmail,
+          'x-wallet-address': walletAddress,
+        },
         body: JSON.stringify({ isActive: !currentStatus })
       })
 
@@ -91,7 +104,12 @@ export default function DashboardPage() {
         
         // Also refresh analytics to get updated counts
         if (user?._id) {
-          const analyticsRes = await fetch(`/api/analytics/seller/${user._id}`)
+          const analyticsRes = await fetch(`/api/analytics/seller/${user._id}`, {
+            headers: {
+              'x-user-email': currentEmail,
+              'x-wallet-address': walletAddress,
+            }
+          })
           if (analyticsRes.ok) {
             const { data: analyticsData } = await analyticsRes.json()
             setAnalytics(analyticsData)
@@ -346,7 +364,7 @@ export default function DashboardPage() {
                       description="Create your first product to start accepting crypto payments"
                       action={{
                         label: "Create Product",
-                        onClick: () => window.location.href = "/products/new"
+                        onClick: () => router.push("/products/new")
                       }}
                     />
                   </CardContent>
@@ -362,7 +380,7 @@ export default function DashboardPage() {
                         key={productId}
                         product={product}
                         showOwnerActions={true}
-                        onEdit={() => window.location.href = `/products/${productId}/edit`}
+                        onEdit={() => router.push(`/products/${productId}/edit`)}
                         onToggleStatus={() => handleToggleStatus(
                           productId, 
                           product.isActive !== undefined ? product.isActive : product.status === 'active'

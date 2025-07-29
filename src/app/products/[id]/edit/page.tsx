@@ -37,7 +37,24 @@ export default function EditProductPage() {
   const fetchProduct = React.useCallback(async () => {
     try {
       setIsLoading(true)
-      const response = await fetch(`/api/products/${productId}`)
+      
+      // Get authentication credentials from user session
+      const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+      const currentWalletAddress = user?.walletAddress || walletAddress
+      
+      if (!currentEmail || !currentWalletAddress) {
+        toast.error("Authentication required")
+        router.push('/auth')
+        return
+      }
+
+      const response = await fetch(`/api/products/${productId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-email': currentEmail,
+          'x-wallet-address': currentWalletAddress,
+        }
+      })
       
       if (response.ok) {
         const { data } = await response.json()
@@ -53,7 +70,7 @@ export default function EditProductPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [productId, router])
+  }, [productId, router, user, walletAddress])
 
   useEffect(() => {
     if (productId) {
@@ -73,6 +90,15 @@ export default function EditProductPage() {
       return
     }
 
+    // Get authentication credentials
+    const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+    const currentWalletAddress = user?.walletAddress || walletAddress
+    
+    if (!currentEmail || !currentWalletAddress) {
+      toast.error("Authentication required")
+      return
+    }
+
     try {
       setIsSubmitting(true)
       
@@ -80,6 +106,8 @@ export default function EditProductPage() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'x-user-email': currentEmail,
+          'x-wallet-address': currentWalletAddress,
         },
         body: JSON.stringify({
           ...data,
@@ -105,6 +133,15 @@ export default function EditProductPage() {
   const handleToggleStatus = async () => {
     if (!product) return
 
+    // Get authentication credentials
+    const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+    const currentWalletAddress = user?.walletAddress || walletAddress
+    
+    if (!currentEmail || !currentWalletAddress) {
+      toast.error("Authentication required")
+      return
+    }
+
     try {
       setIsTogglingStatus(true)
       const newStatus = !product.isActive
@@ -113,6 +150,8 @@ export default function EditProductPage() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'x-user-email': currentEmail,
+          'x-wallet-address': currentWalletAddress,
         },
         body: JSON.stringify({
           isActive: newStatus
@@ -140,9 +179,22 @@ export default function EditProductPage() {
   const handleDeleteProduct = async () => {
     if (!product) return
 
+    // Get authentication credentials
+    const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+    const currentWalletAddress = user?.walletAddress || walletAddress
+    
+    if (!currentEmail || !currentWalletAddress) {
+      toast.error("Authentication required")
+      return
+    }
+
     try {
       const response = await fetch(`/api/products/${productId}`, {
         method: 'DELETE',
+        headers: {
+          'x-user-email': currentEmail,
+          'x-wallet-address': currentWalletAddress,
+        },
       })
 
       if (response.ok) {
@@ -172,7 +224,7 @@ export default function EditProductPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#F2F2F2]">
         <Header />
         <Container className="py-8">
           <div className="text-center">

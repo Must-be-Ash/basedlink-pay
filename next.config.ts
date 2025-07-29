@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   serverExternalPackages: ['mongodb'],
   images: {
-    domains: ['localhost', 'basedlink.xyz'],
+    domains: ['localhost', 'stablelink.xyz'],
     remotePatterns: [
       {
         protocol: 'https',

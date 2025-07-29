@@ -8,8 +8,8 @@ This document outlines the comprehensive security measures implemented to protec
 ### 1. Origin Validation (`src/lib/security.ts`)
 
 **Allowed Origins:**
-- `https://basedlink.xyz` (Production)
-- `https://www.basedlink.xyz` (Production with www)
+- `https://stablelink.xyz` (Production)
+- `https://www.stablelink.xyz` (Production with www)
 - `http://localhost:3000` (Development)
 - `http://127.0.0.1:3000` (Development)
 - Vercel preview URLs (automatic)
@@ -89,12 +89,12 @@ export const GET = withSecurity(async (request: NextRequest) => {
 ```bash
 # Add to .env.local for additional security
 API_KEY=your_secure_api_key_for_server_to_server_requests
-NEXT_PUBLIC_BASE_URL=https://basedlink.xyz
+NEXT_PUBLIC_BASE_URL=https://stablelink.xyz
 ```
 
 ## Security Benefits
 
-1. **Origin Restriction**: Only basedlink.xyz can access user data
+1. **Origin Restriction**: Only stablelink.xyz can access user data
 2. **User Isolation**: Users cannot access other users' data
 3. **CORS Protection**: Prevents unauthorized cross-origin requests
 4. **XSS Protection**: Multiple headers prevent common attacks

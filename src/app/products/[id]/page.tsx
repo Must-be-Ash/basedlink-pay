@@ -36,7 +36,24 @@ export default function ProductDetailPage() {
   const fetchProduct = React.useCallback(async () => {
     try {
       setIsLoading(true)
-      const response = await fetch(`/api/products/${productId}`)
+      
+      // Get authentication credentials from user session
+      const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+      const walletAddress = user?.walletAddress
+      
+      if (!currentEmail || !walletAddress) {
+        toast.error("Authentication required")
+        setIsLoading(false)
+        return
+      }
+
+      const response = await fetch(`/api/products/${productId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-email': currentEmail,
+          'x-wallet-address': walletAddress,
+        }
+      })
       
       if (response.ok) {
         const { data } = await response.json()
@@ -50,7 +67,7 @@ export default function ProductDetailPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [productId])
+  }, [productId, user])
 
   useEffect(() => {
     if (productId) {
@@ -80,16 +97,31 @@ export default function ProductDetailPage() {
   const handleToggleStatus = async () => {
     if (!product) return
 
+    // Get authentication credentials
+    const currentEmail = user?.email || localStorage.getItem('cdp_auth_email')
+    const walletAddress = user?.walletAddress
+    
+    if (!currentEmail || !walletAddress) {
+      toast.error("Authentication required")
+      return
+    }
+
     try {
       const response = await fetch(`/api/products/${productId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-email': currentEmail,
+          'x-wallet-address': walletAddress,
+        },
         body: JSON.stringify({ isActive: !product.isActive })
       })
 
       if (response.ok) {
         setProduct({ ...product, isActive: !product.isActive })
         toast.success(`Product ${!product.isActive ? 'activated' : 'deactivated'}`)
+      } else {
+        toast.error("Failed to update product status")
       }
     } catch (error) {
       console.error('Failed to toggle product status:', error)
@@ -135,11 +167,11 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+      <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
         <Header />
         <Container className="py-8">
           <div className="text-center max-w-md mx-auto">
-            <div className="p-8 rounded-xl border" style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
+            <div className="p-8 rounded-xl border" style={{ backgroundColor: '#F2F2F2', borderColor: '#e5e7eb' }}>
               <h1 className="text-2xl font-bold mb-4" style={{ color: '#1f2937' }}>Product Not Found</h1>
               <p className="mb-6 leading-relaxed" style={{ color: '#6b7280' }}>
                 The product you&apos;re looking for doesn&apos;t exist.
@@ -167,7 +199,7 @@ export default function ProductDetailPage() {
   const isOwner = user?._id?.toString() === product.sellerId?.toString()
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#fafbfc' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F2F2F2' }}>
       <Header />
       
       <Container className="py-12 max-w-3xl">
@@ -260,7 +292,7 @@ export default function ProductDetailPage() {
                     PUBLIC URL
                   </div>
                   <div className="flex items-center">
-                    <span className="text-sm" style={{ color: '#64748b' }}>basedlink.xyz</span>
+                    <span className="text-sm" style={{ color: '#64748b' }}>stablelink.xyz</span>
                     <span className="font-mono text-sm font-medium ml-1" style={{ color: '#0f172a' }}>
                       /pay/{product.slug}
                     </span>

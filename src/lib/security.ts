@@ -3,10 +3,8 @@ import type { User } from '../types/user'
 
 // Allowed origins for your application
 const ALLOWED_ORIGINS = [
-  'https://basedlink.xyz',
-  'https://www.basedlink.xyz',
-  'https://www.stablelink.xyz',
   'https://stablelink.xyz',
+  'https://www.stablelink.xyz',
   // Add development origins
   'http://localhost:3000',
   'http://127.0.0.1:3000',
@@ -22,7 +20,7 @@ export function validateOrigin(request: NextRequest): boolean {
   if (!origin && !referer) {
     // Allow same-origin requests (from your own domain)
     const host = request.headers.get('host')
-    return host?.includes('basedlink.xyz') || host?.includes('localhost') || host?.includes('127.0.0.1') || false
+    return host?.includes('stablelink.xyz') || host?.includes('localhost') || host?.includes('127.0.0.1') || false
   }
   
   // Check origin
@@ -46,7 +44,7 @@ export function createCorsHeaders(origin?: string | null): Headers {
     headers.set('Access-Control-Allow-Origin', origin)
   } else {
     // Default to your main domain
-    headers.set('Access-Control-Allow-Origin', 'https://basedlink.xyz')
+    headers.set('Access-Control-Allow-Origin', 'https://stablelink.xyz')
   }
   
   headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
