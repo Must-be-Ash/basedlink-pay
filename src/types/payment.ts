@@ -12,7 +12,7 @@ export interface Payment {
   amountUSDC: number
   fromAddress: string
   toAddress: string
-  transactionHash: string
+  transactionHash?: string
   status: PaymentStatus
   errorMessage?: string
   createdAt: Date
@@ -24,7 +24,7 @@ export interface CreatePaymentRequest {
   buyerEmail: string
   buyerWalletAddress: string
   amountUSDC: number
-  transactionHash: string
+  transactionHash?: string
 }
 
 export interface UpdatePaymentRequest {

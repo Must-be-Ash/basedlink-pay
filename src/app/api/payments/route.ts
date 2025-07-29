@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { PaymentModel } from '@/lib/models/payment'
 import { ProductModel } from '@/lib/models/product'
 import { createSuccessResponse, createErrorResponse, handleApiError, validateObjectId } from '@/lib/api-utils'
-import { createPaymentSchema } from '@/lib/validation'
+import { createPaymentSchema, createPendingPaymentSchema } from '@/lib/validation'
 
 // GET /api/payments - Get user's payments
 export async function GET(request: NextRequest) {
@@ -38,10 +38,17 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate request body
-    const validation = createPaymentSchema.safeParse(body)
+    // Try pending payment schema first (new flow), then full payment schema (legacy)
+    let validation = createPendingPaymentSchema.safeParse(body)
+    let isPendingPayment = true
+    
     if (!validation.success) {
-      return createErrorResponse(validation.error.errors[0].message, 400)
+      validation = createPaymentSchema.safeParse(body)
+      isPendingPayment = false
+      
+      if (!validation.success) {
+        return createErrorResponse(validation.error.errors[0].message, 400)
+      }
     }
 
     // Verify product exists and is active
@@ -59,13 +66,21 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Payment amount does not match product price', 400)
     }
 
-    // Check if payment with this transaction hash already exists
-    const existingPayment = await PaymentModel.findByTransactionHash(validation.data.transactionHash)
-    if (existingPayment) {
-      return createErrorResponse('Payment with this transaction hash already exists', 409)
+    // For payments with transaction hash, check if it already exists
+    if (!isPendingPayment && 'transactionHash' in validation.data && validation.data.transactionHash) {
+      const existingPayment = await PaymentModel.findByTransactionHash(validation.data.transactionHash as string)
+      if (existingPayment) {
+        return createErrorResponse('Payment with this transaction hash already exists', 409)
+      }
     }
 
-    const payment = await PaymentModel.create(validation.data)
+    // Create payment with appropriate status
+    const paymentData = {
+      ...validation.data,
+      status: isPendingPayment ? 'pending' : 'completed'
+    }
+
+    const payment = await PaymentModel.create(paymentData)
     return createSuccessResponse(payment, 'Payment created successfully')
   } catch (error) {
     return handleApiError(error)

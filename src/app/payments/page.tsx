@@ -65,7 +65,7 @@ export default function PaymentsPage() {
     if (searchQuery) {
       filtered = filtered.filter(payment =>
         payment.buyerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        payment.transactionHash.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        payment.transactionHash?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         payment.product?.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     }

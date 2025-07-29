@@ -71,6 +71,7 @@ export const updateProductSchema = z.object({
 })
 
 // Payment validation schemas
+// Schema for creating payment with transaction hash (existing flow)
 export const createPaymentSchema = z.object({
   productId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid product ID'),
   buyerEmail: z.string().email('Invalid email address'),
@@ -80,6 +81,17 @@ export const createPaymentSchema = z.object({
   fromAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
   toAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
   transactionHash: z.string().regex(/^0x[a-fA-F0-9]{64}$/, 'Invalid transaction hash'),
+})
+
+// Schema for creating payment record before transaction (new flow)
+export const createPendingPaymentSchema = z.object({
+  productId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid product ID'),
+  buyerEmail: z.string().email('Invalid email address'),
+  buyerWalletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
+  amountUSD: z.number().min(0.01, 'Amount must be positive'),
+  amountUSDC: z.number().min(0.01, 'Amount must be positive'),
+  fromAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
+  toAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
 })
 
 export const updatePaymentSchema = z.object({

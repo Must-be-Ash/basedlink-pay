@@ -32,11 +32,12 @@ export function PaymentButton({
   disabled = false,
   className 
 }: PaymentButtonProps) {
-  const { isAuthenticated, walletAddress } = useUserSession()
+  const { isAuthenticated, walletAddress, authCredentials } = useUserSession()
   const { sendUSDCPayment, isLoading } = useTransaction()
   const { openOnramp, isCreatingSession } = useOnramp()
-  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error' | 'insufficient_balance'>('idle')
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'confirming' | 'success' | 'error' | 'insufficient_balance'>('idle')
   const [txHash, setTxHash] = useState<string | null>(null)
+  const [paymentId, setPaymentId] = useState<string | null>(null)
 
   // Use the new useWalletBalance hook
   const { 
@@ -77,15 +78,61 @@ export function PaymentButton({
     setPaymentStatus('processing')
 
     try {
+      // Step 1: Create pending payment record
+      const paymentResponse = await fetch('/api/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: product._id?.toString(),
+          buyerEmail: authCredentials.email || walletAddress, // Use actual email or fallback to wallet
+          buyerWalletAddress: walletAddress,
+          amountUSD: product.priceUSD,
+          amountUSDC: product.priceUSDC,
+          fromAddress: walletAddress,
+          toAddress: recipientAddress,
+        }),
+      })
+
+      if (!paymentResponse.ok) {
+        const errorData = await paymentResponse.json()
+        throw new Error(errorData.error || 'Failed to create payment record')
+      }
+
+      const { data: payment } = await paymentResponse.json()
+      setPaymentId(payment._id)
+
+      // Step 2: Send the transaction
       const txHash = await sendUSDCPayment(
         recipientAddress,
         product.priceUSDC
       )
       
       setTxHash(txHash)
+      setPaymentStatus('confirming')
+
+      // Step 3: Confirm payment with blockchain verification
+      const confirmResponse = await fetch('/api/payments/confirm', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          transactionHash: txHash,
+          paymentId: paymentId,
+        }),
+      })
+
+      if (!confirmResponse.ok) {
+        const errorData = await confirmResponse.json()
+        throw new Error(errorData.error || 'Payment confirmation failed')
+      }
+
       setPaymentStatus('success')
       onPaymentSuccess?.(txHash)
-      toast.success("Payment sent successfully!", { duration: 1000 })
+      toast.success("Payment confirmed on blockchain!", { duration: 1000 })
+      
     } catch (error) {
       console.error("Payment failed:", error)
       const errorMessage = error instanceof Error ? error.message : "Payment failed"
@@ -101,7 +148,7 @@ export function PaymentButton({
         toast.error(errorMessage, { duration: 1000 })
       }
     }
-  }, [isAuthenticated, walletAddress, recipientAddress, hasEnoughBalance, sendUSDCPayment, product.priceUSDC, onPaymentSuccess, onPaymentError, recheckBalance])
+  }, [isAuthenticated, walletAddress, recipientAddress, hasEnoughBalance, sendUSDCPayment, product, onPaymentSuccess, onPaymentError, recheckBalance, authCredentials.email, paymentId])
 
   const handleFundWallet = async () => {
     await openOnramp(product.priceUSDC.toString())
@@ -110,7 +157,30 @@ export function PaymentButton({
   const resetPayment = () => {
     setPaymentStatus('idle')
     setTxHash(null)
+    setPaymentId(null)
     recheckBalance() // Refresh balance
+  }
+
+  // Payment confirming state - show transaction sent, waiting for confirmation
+  if (paymentStatus === 'confirming' && txHash) {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        <div className="text-center pb-4">
+          <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#fef3c7' }}>
+            <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#f59e0b' }} />
+          </div>
+          <h3 className="text-lg font-semibold mb-2" style={{ color: '#92400e' }}>Confirming Payment...</h3>
+          <p className="text-sm leading-relaxed" style={{ color: '#b45309' }}>
+            Transaction sent! Verifying on blockchain...
+          </p>
+        </div>
+        <div className="p-3 rounded-lg" style={{ backgroundColor: '#fffbeb' }}>
+          <p className="text-xs font-mono text-center leading-relaxed" style={{ color: '#f59e0b' }}>
+            Transaction: {txHash.slice(0, 10)}...{txHash.slice(-8)}
+          </p>
+        </div>
+      </div>
+    )
   }
 
   // Payment success state
@@ -121,9 +191,9 @@ export function PaymentButton({
           <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#d1fae5' }}>
             <CheckCircle2 className="w-6 h-6" style={{ color: '#059669' }} />
           </div>
-          <h3 className="text-lg font-semibold mb-2" style={{ color: '#065f46' }}>Payment Successful!</h3>
+          <h3 className="text-lg font-semibold mb-2" style={{ color: '#065f46' }}>Payment Confirmed!</h3>
           <p className="text-sm leading-relaxed" style={{ color: '#047857' }}>
-            Your payment of <span className="font-semibold">{product.priceUSDC} USDC</span> has been sent.
+            Your payment of <span className="font-semibold">{product.priceUSDC} USDC</span> has been confirmed on blockchain.
           </p>
         </div>
         <div className="p-3 rounded-lg" style={{ backgroundColor: '#f0fdf4' }}>
@@ -248,11 +318,11 @@ export function PaymentButton({
       
       <Button3D
         onClick={handlePayment}
-        disabled={disabled || isLoading || paymentStatus === 'processing' || checkingBalance}
+        disabled={disabled || isLoading || paymentStatus === 'processing' || paymentStatus === 'confirming' || checkingBalance}
         variant="default"
         size="lg"
         className="w-full"
-        isLoading={paymentStatus === 'processing'}
+        isLoading={paymentStatus === 'processing' || paymentStatus === 'confirming'}
         style={{ 
           background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
         }}
@@ -260,7 +330,12 @@ export function PaymentButton({
         {paymentStatus === 'processing' ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Processing Payment...
+            Sending Payment...
+          </>
+        ) : paymentStatus === 'confirming' ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Confirming...
           </>
         ) : (
           <>
