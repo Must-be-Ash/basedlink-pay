@@ -130,13 +130,14 @@ export function Header({ className }: HeaderProps) {
                 backgroundColor: isActive('/') ? '#f8f9fa' : 'transparent'
               }}
             >
-              <div 
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ 
-                  background: 'linear-gradient(to bottom, #ff6d41, #ff5420)'
-                }}
-              >
-                <Zap className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                <Image
+                  src="/logo.svg"
+                  alt="StableLink Logo"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
               </div>
             </Link>
             <span 
@@ -305,17 +306,17 @@ export function Header({ className }: HeaderProps) {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.1, ease: "easeOut" }}
               >
-                <div className="w-6 h-6 rounded-lg overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
+                <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#f8f8f8' }}>
                   {user?.profileImageUrl ? (
                     <Image
                       src={user.profileImageUrl}
                       alt={user.name || 'User'}
-                      width={24}
-                      height={24}
-                      className="object-cover w-full h-full rounded-lg"
+                      width={32}
+                      height={32}
+                      className="object-cover w-full h-full rounded-full"
                     />
                   ) : (
-                    <User className="w-4 h-4" style={{ color: '#ff5941' }} />
+                    <User className="w-5 h-5" style={{ color: '#ff5941' }} />
                   )}
                 </div>
                 <span 
@@ -346,19 +347,19 @@ export function Header({ className }: HeaderProps) {
                     <div className="pb-4 border-b" style={{ borderColor: '#f3f4f6' }}>
                       <div className="flex items-center space-x-4">
                         <div 
-                          className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden"
+                          className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden"
                           style={{ backgroundColor: '#f8f8f8' }}
                         >
                           {user?.profileImageUrl ? (
                             <Image
                               src={user.profileImageUrl}
                               alt={user.name || 'User'}
-                              width={48}
-                              height={48}
-                              className="object-cover w-full h-full rounded-xl"
+                              width={56}
+                              height={56}
+                              className="object-cover w-full h-full rounded-full"
                             />
                           ) : (
-                            <User className="w-6 h-6" style={{ color: '#ff5941' }} />
+                            <User className="w-7 h-7" style={{ color: '#ff5941' }} />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
