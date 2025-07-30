@@ -51,7 +51,7 @@ export default function HomePage() {
         {/* GitHub Header */}
         <div className="pt-12 pb-2 text-center">
           <RainbowButton
-            onClick={() => window.open('https://github.com/Must-be-Ash/basedlink-pay', '_blank')}
+            onClick={() => window.open('https://fork.stablelink.xyz/', '_blank')}
             className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white transition-all duration-200 hover:scale-105"
           >
             <Github className="w-4 h-4" />

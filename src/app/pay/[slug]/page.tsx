@@ -11,10 +11,11 @@ import { formatCurrency } from "@/lib/utils"
 import { CDPProvider } from "@/components/CDPProvider"
 import { WalletAuth } from "@/components/WalletAuth"
 import { useUserSession } from "@/hooks/useUserSession"
-import { User, AlertCircle, CreditCard } from "lucide-react"
+import { User, AlertCircle, CreditCard, Github } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { TextShimmer } from "@/components/ui/text-shimmer"
+import { RainbowButton } from "@/components/ui/rainbow-button"
 import { PaymentSuccess } from "@/components/PaymentSuccess"
 import type { ProductWithSeller } from "@/types/product"
 
@@ -111,8 +112,20 @@ export default function PaymentPage() {
 
   return (
     <CDPProvider>
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#333333' }}>
-        <Container className="py-4 sm:py-8 px-4 w-full">
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#333333' }}>
+        {/* GitHub Header */}
+        <div className="pt-12 pb-2 text-center">
+          <RainbowButton
+            onClick={() => window.open('https://fork.stablelink.xyz', '_blank')}
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white transition-all duration-200 hover:scale-105"
+          >
+            <Github className="w-4 h-4" />
+            Fork this project on GitHub
+          </RainbowButton>
+        </div>
+        
+        <div className="flex-1 flex items-center justify-center">
+          <Container className="py-4 sm:py-8 px-4 w-full">
           <div className="max-w-md mx-auto w-full">
             {/* Header */}
 
@@ -216,6 +229,7 @@ export default function PaymentPage() {
             </div>
           </div>
         </Container>
+        </div>
       </div>
     </CDPProvider>
   )
