@@ -219,7 +219,7 @@ export default function HomePage() {
       <VideoModal
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}
-        videoUrl="https://www.youtube.com/watch?v=nJffRKrZ_mE"
+        videoUrl="https://youtu.be/6g_byDU9bdw"
         title="Product Demo"
       />
     </CDPProvider>
