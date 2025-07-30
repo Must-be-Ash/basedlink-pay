@@ -14,7 +14,20 @@ interface VideoModalProps {
 export function VideoModal({ isOpen, onClose, videoUrl, title }: VideoModalProps) {
   // Convert YouTube URL to embed URL
   const getEmbedUrl = (url: string) => {
-    const videoId = url.split('v=')[1]?.split('&')[0]
+    // Handle different YouTube URL formats
+    let videoId = ''
+    
+    if (url.includes('/embed/')) {
+      // Already an embed URL - extract video ID from /embed/videoId
+      videoId = url.split('/embed/')[1]?.split('?')[0]
+    } else if (url.includes('watch?v=')) {
+      // Watch URL - extract video ID from v= parameter
+      videoId = url.split('v=')[1]?.split('&')[0]
+    } else if (url.includes('youtu.be/')) {
+      // Short URL - extract video ID from youtu.be/videoId
+      videoId = url.split('youtu.be/')[1]?.split('?')[0]
+    }
+    
     return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`
   }
 
