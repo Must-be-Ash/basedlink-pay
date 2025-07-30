@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "Crypto Stripe Link - List your product, share your link, get paid",
+  title: "StableLink - List your product, share your link, get paid",
   description: "Get paid for your products and services without platform fees",
   keywords: [
     "crypto payments",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     "Coinbase Commerce",
     "Web3 payments"
   ],
-  authors: [{ name: "Crypto Stripe Link Team" }],
+  authors: [{ name: "Must-be-Ash" }],
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -53,24 +53,24 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   openGraph: {
-    title: "Crypto Stripe Link - List your product, share your link, get paid",
+    title: "StableLink - List your product, share your link, get paid",
     description: "Get paid for your products and services without platform fees",
     url: "https://stablelink.xyz",
-    siteName: "Crypto Stripe Link",
+    siteName: "StableLink",
     type: "website",
     images: [
       {
         url: "https://stablelink.xyz/og.png",
         width: 1200,
         height: 630,
-        alt: "Crypto Stripe Link - Accept Crypto Payments with Shareable Links",
+        alt: "StableLink - Accept Crypto Payments with Shareable Links",
       },
     ],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Crypto Stripe Link - List your product, share your link, get paid",
+    title: "StableLink - List your product, share your link, get paid",
     description: "Get paid for your products and services without platform fees",
     images: ["https://stablelink.xyz/og.png"],
   },
