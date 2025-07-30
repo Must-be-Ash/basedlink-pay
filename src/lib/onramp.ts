@@ -183,7 +183,7 @@ export interface GuestCheckoutLimits {
 
 export const GUEST_CHECKOUT_LIMITS: GuestCheckoutLimits = {
   weeklyLimit: 500,
-  minimumAmount: 1,
+  minimumAmount: 2,
   supportedPaymentMethods: ["CARD", "APPLE_PAY"],
   supportedCountries: ["US"]
 } 
