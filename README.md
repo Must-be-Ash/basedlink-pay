@@ -4,7 +4,7 @@
 
 A full-featured product creation and payment platform built with CDP Embedded Wallets. Your users just enter their email and pay - they'll never know it's crypto. Fork this template to build your own Gumroad, Buy Me a Coffee, Patreon, or any payment-powered business for your specific niche.
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-stablelink.xyz-blue?style=for-the-badge)](https://www.stablelink.xyz)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-stablelink.xyz-blue?style=for-the-badge)](https://v0.stablelink.xyz)
 [![Fork Template](https://img.shields.io/badge/🍴_Fork_Template-GitHub-black?style=for-the-badge)](https://github.com/Must-be-Ash/basedlink-pay)
 [![Get CDP Keys](https://img.shields.io/badge/🔑_Get_CDP_Keys-Free-orange?style=for-the-badge)](https://portal.cdp.coinbase.com/)
 
@@ -398,7 +398,7 @@ Every fork of this template creates new opportunities for global payments. Every
 Built something cool with this template? **[Tag @Must_be_Ash](https://x.com/Must_be_Ash)** and **[@CoinbaseDev](https://x.com/coinbasedev)** - we love seeing what you create!
 
 **🔗 Essential Links**
-[CDP Portal](https://portal.cdp.coinbase.com/) • [Live Demo](https://www.stablelink.xyz) • [Fork Template](https://github.com/Must-be-Ash/basedlink-pay) • [CDP Docs](https://docs.cdp.coinbase.com/)
+[CDP Portal](https://portal.cdp.coinbase.com/) • [Live Demo](https://v0.stablelink.xyz) • [Fork Template](https://github.com/Must-be-Ash/basedlink-pay) • [CDP Docs](https://docs.cdp.coinbase.com/)
 
 ---
 

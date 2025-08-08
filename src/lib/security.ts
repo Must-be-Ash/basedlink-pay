@@ -4,7 +4,7 @@ import type { User } from '../types/user'
 // Allowed origins for your application
 const ALLOWED_ORIGINS = [
   'https://stablelink.xyz',
-  'https://www.stablelink.xyz',
+  'https://v0.stablelink.xyz',
   // Add development origins
   'http://localhost:3000',
   'http://127.0.0.1:3000',
