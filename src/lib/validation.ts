@@ -99,3 +99,9 @@ export const updatePaymentSchema = z.object({
   completedAt: z.date().optional(),
   errorMessage: z.string().optional(),
 })
+
+// Send funds validation schema
+export const sendFundsSchema = z.object({
+  recipientAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
+  amount: z.number().min(0.000001, 'Amount must be at least 0.000001 USDC').max(100000, 'Amount too high'),
+})

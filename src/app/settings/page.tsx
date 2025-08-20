@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useUserSession } from "@/hooks/useUserSession"
 import { formatAddress } from "@/lib/utils"
+import { SendFunds } from "@/components/SendFunds"
 import { 
   User, 
   Wallet, 
@@ -543,7 +544,7 @@ export default function SettingsPage() {
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style={{ backgroundColor: '#f8f8f8' }}>
                   <Wallet className="w-5 h-5" style={{ color: '#ff5941' }} />
                 </div>
-                <h3 className="text-lg font-semibold" style={{ color: '#1f2937' }}>Wallet Address</h3>
+                <h3 className="text-lg font-semibold" style={{ color: '#1f2937' }}>Your Wallet</h3>
               </div>
 
               <div className="space-y-4">
@@ -594,6 +595,13 @@ export default function SettingsPage() {
                     This is your wallet address for receiving payments
                   </p>
                 </div>
+
+                {/* Send Funds Section */}
+                {walletAddress && (
+                  <div className="mt-8 pt-6 border-t" style={{ borderColor: '#e5e7eb' }}>
+                    <SendFunds />
+                  </div>
+                )}
               </div>
             </div>
           </Card>
